@@ -1,0 +1,107 @@
+/* VivaDia — roteador por hash, cabeçalho, menu e vigia de lembretes */
+(function (VD) {
+  const { ic, esc, $ } = VD;
+  const S = VD.store;
+  VD.pages = VD.pages || {};
+  let current = null; // {cleanup}
+  const alerted = new Set();
+
+  const LOGO = `<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#0F5C63"/><circle cx="32" cy="34" r="11" fill="#FE843B"/><g stroke="#FAF8F3" stroke-width="4" stroke-linecap="round"><path d="M32 10v7M12 34h7M45 34h7M18 20l5 5M46 20l-5 5"/></g></svg>`;
+
+  VD.go = (path) => { if (location.hash === '#' + path) render(); else location.hash = path; };
+  VD.back = () => { if (history.length > 1) history.back(); else VD.go('/hoje'); };
+
+  /* ---------- rotas ---------- */
+  const routes = [
+    [/^\/hoje$/, 'hoje'], [/^\/agenda$/, 'agenda'], [/^\/ajuda$/, 'ajuda'],
+    [/^\/medicamentos$/, 'medicamentos'], [/^\/medicamentos\/novo$/, 'novoRemedio'], [/^\/medicamentos\/(.+)$/, 'detalhe'],
+    [/^\/mental$/, 'mental'], [/^\/jogo\/(\w+)$/, 'jogo'],
+    [/^\/preferencias$/, 'preferencias'], [/^\/lembrete\/(.+)$/, 'lembrete'],
+  ];
+  function match() {
+    const path = decodeURIComponent((location.hash || '#/hoje').slice(1)) || '/hoje';
+    for (const [re, name] of routes) { const m = path.match(re); if (m) return { name, params: m.slice(1), path }; }
+    return { name: 'hoje', params: [], path: '/hoje' };
+  }
+
+  /* ---------- casca ---------- */
+  function applyFont() { document.documentElement.dataset.font = S.settings.fontSize; }
+
+  function headerHTML(page) {
+    const fs = S.FONT_STEPS.indexOf(S.settings.fontSize);
+    const left = page.back
+      ? `<button class="back" data-act="back" aria-label="Voltar para a tela anterior">${ic('arrow_back', { size: 1.75 })}</button><span class="header-title trunc">${esc(page.title || '')}</span>`
+      : `<div class="brand">${LOGO}<b>VivaDia</b></div>`;
+    return `<div class="header-in">
+      <div class="row" style="min-width:0">${left}</div>
+      <div class="header-right">
+        <div class="fontsize" role="group" aria-label="Ajustar tamanho do texto">
+          <button data-act="fontMinus" aria-label="Diminuir letras" ${fs === 0 ? 'disabled' : ''}>A-</button>
+          <button data-act="fontPlus" aria-label="Aumentar letras" ${fs === S.FONT_STEPS.length - 1 ? 'disabled' : ''}>A+</button>
+        </div>
+        <button class="avatar" data-act="prefs" aria-label="Preferências e avisos">${VD.initial(VD.USER.name)}</button>
+      </div></div>`;
+  }
+
+  function navHTML(active) {
+    const items = [['hoje', 'wb_sunny', 'Hoje'], ['agenda', 'calendar_month', 'Agenda'], ['ajuda', 'support', 'Ajuda']];
+    return `<div class="nav-in">${items.map(([id, icon, label]) => `<a href="#/${id}" ${active === id ? 'aria-current="page"' : ''}>${ic(icon)}<span>${label}</span></a>`).join('')}</div>`;
+  }
+
+  function render() {
+    const scroll = window.scrollY;
+    const sameRoute = current && current.path === match().path;
+    if (current && current.cleanup) { try { current.cleanup(); } catch (e) {} }
+    const { name, params, path } = match();
+    const page = VD.pages[name](...params) || {};
+    current = { path, name, cleanup: page.cleanup };
+    applyFont();
+
+    const header = $('#header'), nav = $('#nav'), view = $('#view');
+    header.hidden = !!page.fullscreen;
+    nav.hidden = !page.tab;
+    if (!page.fullscreen) header.innerHTML = headerHTML(page);
+    if (page.tab) nav.innerHTML = navHTML(page.tab);
+    view.className = page.tab ? '' : 'no-nav';
+    view.innerHTML = page.html;
+    if (page.mount) page.mount(view);
+    window.scrollTo(0, sameRoute ? scroll : 0);
+    document.title = `${page.title || 'VivaDia'} — VivaDia`;
+  }
+  VD.render = render;
+
+  VD.on('back', () => VD.back());
+  VD.on('prefs', () => VD.go('/preferencias'));
+  VD.on('fontMinus', () => S.stepFont(-1));
+  VD.on('fontPlus', () => S.stepFont(1));
+
+  S.subscribe(() => { if (!$('#view [data-no-rerender]')) render(); else { applyFont(); } });
+  window.addEventListener('hashchange', () => { VD.ui.speech.stop(); render(); });
+
+  /* ---------- vigia de lembretes: avisa quando chega a hora ---------- */
+  function watchReminders() {
+    const td = VD.today(), now = VD.toMin(VD.nowTime());
+    if (match().name === 'lembrete') return;
+    S.dayTasks(td).forEach((t) => {
+      if (t.status === 'done' || t.category === 'consulta') return;
+      const diff = now - VD.toMin(t.time);
+      const id = `${t.key}|${t.time}`;
+      if (diff >= 0 && diff <= 2 && !alerted.has(id)) {
+        alerted.add(id);
+        if (S.settings.bigAlert) VD.go(`/lembrete/${t.key}`);
+        else { VD.ui.toast(`Hora de: ${t.title}`, { icon: 'notifications_active', kind: 'warn', ms: 6000 }); if (S.settings.loudSound) VD.ui.beep(3); }
+      }
+    });
+  }
+
+  function boot() {
+    applyFont();
+    render();
+    watchReminders();
+    setInterval(watchReminders, 15000);
+    setInterval(() => { if (['hoje', 'agenda'].includes(current && current.name) && !document.querySelector('.overlay')) render(); }, 60000);
+    window.addEventListener('online', () => current && current.name === 'hoje' && render());
+    window.addEventListener('offline', () => current && current.name === 'hoje' && render());
+  }
+  document.addEventListener('DOMContentLoaded', boot);
+})(window.VD);
