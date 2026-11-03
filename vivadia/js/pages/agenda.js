@@ -41,19 +41,23 @@
       const isNext = nextKey === t.key;
       const canMark = canAct && t.status !== 'done';
       return `<div class="task-card ${isNext ? 'next' : ''} stack">
-        <div class="row start between">
-          <div class="row start">
-            <span class="t-time-m time ${t.status === 'done' ? '' : 'c-primary'}">${t.time}</span>
-            <div class="stack-xs"><span class="t-small upper cat-text-${t.category} row" style="gap:.3rem">${ic(cat.icon, { size: 1.15 })}${cat.label}</span>
-              <h3 class="t-h3">${esc(t.title)}</h3></div>
+        <div class="row start between wrap" style="gap:0.75rem">
+          <div class="row start wrap" style="flex: 1 1 12rem; min-width:0; gap:0.5rem">
+            <span class="t-time-m time ${t.status === 'done' ? '' : 'c-primary'}" style="flex-shrink:0">${t.time}</span>
+            <div class="stack-xs" style="flex: 1 1 8rem; min-width:0;">
+              <span class="t-small upper cat-text-${t.category} row wrap" style="gap:.3rem">${ic(cat.icon, { size: 1.15 })}<span>${cat.label}</span></span>
+              <h3 class="t-h3">${esc(t.title)}</h3>
+            </div>
           </div>
-          ${VD.ui.statusBadge(t.status, t.status === 'done' ? {} : t.category === 'consulta' ? { label: 'Agendado' } : {})}
+          <div style="flex-shrink: 0;">
+            ${VD.ui.statusBadge(t.status, t.status === 'done' ? {} : t.category === 'consulta' ? { label: 'Agendado' } : {})}
+          </div>
         </div>
         ${t.desc ? `<p class="t-md muted">${esc(t.desc)}</p>` : ''}
-        ${t.note ? `<div class="note row start">${ic('info', { cls: 'c-accent' })}<span class="t-md">${esc(t.note)}</span></div>` : ''}
-        ${t.status === 'done' && t.doneAt ? `<p class="t-md c-green row" style="gap:.4rem">${ic('done_all', { cls: 'c-green' })}Confirmado às ${t.doneAt}</p>` : ''}
-        <div class="row" style="gap:.6rem">
-          ${canMark ? `<button class="btn ${t.category === 'consulta' ? 'btn-softteal' : 'btn-primary'}" data-act="agMark" data-key="${t.key}">${ic('check')}<span>${t.medId ? 'Marcar como Tomado' : 'Marcar como feita'}</span></button>` : ''}
+        ${t.note ? `<div class="note row start wrap">${ic('info', { cls: 'c-accent' })}<span class="t-md">${esc(t.note)}</span></div>` : ''}
+        ${t.status === 'done' && t.doneAt ? `<p class="t-md c-green row wrap" style="gap:.4rem">${ic('done_all', { cls: 'c-green' })}Confirmado às ${t.doneAt}</p>` : ''}
+        <div class="row wrap" style="gap:.6rem">
+          ${canMark ? `<button class="btn ${t.category === 'consulta' ? 'btn-softteal' : 'btn-primary'}" style="flex:1; min-width:0; height:auto; padding-block:0.75rem;" data-act="agMark" data-key="${t.key}">${ic('check')}<span style="white-space: normal; line-height:1.2">${t.medId ? 'Marcar Tomado' : 'Marcar feita'}</span></button>` : ''}
           <button class="iconbtn" data-act="openTask" data-key="${t.key}" aria-label="Ver detalhes de ${esc(t.title)}">${ic('more_horiz')}</button>
         </div>
       </div>`;
@@ -69,20 +73,27 @@
     return {
       tab: 'agenda',
       title: 'Agenda',
-      html: `<div class="page" style="padding-left:0;padding-right:0;gap:1rem">
-        <div style="padding:0 var(--margin)"><div class="card sunk row between">
-          <div class="row"><div class="iconchip round" style="background:var(--teal-fixed);color:var(--primary)">${ic('calendar_today', { fill: true })}</div>
-            <div><div class="t-h3">Semana Organizada</div><div class="t-md muted">${sel === td ? 'Hoje é' : 'Você está vendo'} ${wd}, ${VD.dayMonth(sel)}</div></div></div>
-          <div style="background:#fff;border-radius:9999px;padding:.2rem .85rem;text-align:center;box-shadow:var(--shadow-card)"><div class="t-label c-teal">${done} / ${total}</div><div class="t-small muted" style="line-height:1">Feitos</div></div>
-        </div></div>
-        <div><div class="row between" style="padding:0 var(--margin)"><span class="t-label">Escolha o dia:</span><span class="t-small c-teal">${VD.capital(VD.MONTHS[selDate.getMonth()])} ${selDate.getFullYear()}</span></div>
-          <div class="days no-scrollbar" id="days">${chips}</div></div>
+      html: `<button class="btn xl btn-accent" style="margin:10px" data-act="addReminder">${ic('add_circle', { size: 2 })}<span>Adicionar Novo Lembrete</span></button>
+      <div style="padding:0 var(--margin)">
+          <div class="card sunk row between wrap" style="gap:1rem">
+            <div class="row start" style="flex: 1 1 12rem; min-width:0;">
+              <div class="iconchip round" style="flex-shrink:0; background:var(--teal-fixed);color:var(--primary)">${ic('calendar_today', { fill: true })}</div>
+              <div style="min-width:0; flex:1">
+                <div class="t-h3">Semana Organizada</div>
+                <div class="t-md muted">${sel === td ? 'Hoje é' : 'Você está vendo'} ${wd}, ${VD.dayMonth(sel)}</div>
+              </div>
+            </div>
+            <div style="background:#fff;border-radius:1.5rem;padding:.4rem 1rem;text-align:center;box-shadow:var(--shadow-card);flex-shrink:0;">
+              <div class="t-label c-teal">${done} / ${total}</div>
+              <div class="t-small muted" style="line-height:1">Feitos</div>
+            </div>
+          </div>
+        </div>
+        <div class="row between" style="padding:10px var(--margin)"><span class="t-label">Escolha o dia:</span><span class="t-small c-teal">${VD.capital(VD.MONTHS[selDate.getMonth()])} ${selDate.getFullYear()}</span></div>
+        <div class="days no-scrollbar" id="days">${chips}</div>
         <div class="filters" role="group" aria-label="Filtrar por tipo">${pills}</div>
-        <div style="padding:0 var(--margin)"><div class="hero"><div class="hero-img" aria-hidden="true">☕ 🥣 🌿 🌞</div>
-          <div class="row between" style="padding:.75rem 1rem;background:var(--teal-soft)"><span class="t-bold">Rotina Tranquila</span><span class="t-small c-teal">${wd}${selDate.getDay() >= 1 && selDate.getDay() <= 5 ? '-feira' : ''}</span></div></div></div>
-        <div class="stack-lg" style="padding:0 var(--margin)">
+        <div class="stack-lg" style="padding:0 var(--margin);">
           ${sections || `<div class="empty">${ic('event_available')}<p class="t-lg">Nenhuma atividade ${filter === 'all' ? 'neste dia' : 'deste tipo neste dia'}.</p></div>`}
-          <button class="btn xl btn-accent" data-act="addReminder">${ic('add_circle', { size: 2 })}<span>Adicionar Novo Lembrete</span></button>
         </div>
       </div>`,
       mount(root) {

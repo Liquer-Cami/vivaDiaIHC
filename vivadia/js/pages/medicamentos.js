@@ -42,6 +42,8 @@
       title: 'Medicamentos',
       back: true,
       html: `<div class="page">
+      
+        <button class="btn lg btn-accent" data-act="goNewMed">${ic('add_circle', { size: 2 })}<span>Adicionar Remédio</span></button>
         <div class="stack-xs">
           <div class="row c-primary" style="gap:.4rem">${ic('medication', { fill: true, size: 1.75 })}<span class="t-small upper">Rotina diária</span></div>
           <h1 class="t-h1">Medicamentos</h1>
@@ -55,12 +57,7 @@
           </div>
           <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><div style="width:${pct}%"></div></div>
         </section>
-        ${meds.length ? meds.map(card).join('') : `<div class="empty">${ic('medication')}<p class="t-lg">Nenhum remédio cadastrado para hoje.</p></div>`}
-        <div class="card tint row" style="gap:var(--gap-lg)">
-          <div class="iconchip lg round" style="background:#fff;color:var(--primary)">${ic('favorite', { size: 2 })}</div>
-          <div><div class="t-h3">Cuidado contínuo</div><div class="t-md muted">Dúvidas sobre efeitos ou horários? ${esc(S.caregiver.name.split(' ')[0])} está conectada.</div></div>
-        </div>
-        <button class="btn lg btn-accent" data-act="goNewMed">${ic('add_circle', { size: 2 })}<span>Adicionar Remédio</span></button>
+        ${meds.length ? '<div class="cards2">' + meds.map(card).join('') + '</div>' : `<div class="empty">${ic('medication')}<p class="t-lg">Nenhum remédio cadastrado para hoje.</p></div>`}
       </div>`,
     };
   };

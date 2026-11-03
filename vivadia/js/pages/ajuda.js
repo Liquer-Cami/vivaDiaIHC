@@ -33,7 +33,7 @@
           <a class="btn xl btn-danger" href="tel:192" data-act="samu" aria-label="Ligar para o SAMU, número 192">${ic('call', { fill: true, size: 2.25 })}<span>LIGAR SAMU (192)</span></a>
           <div class="row" style="background:rgba(255,255,255,.8);padding:.75rem;border-radius:1rem">${ic('info', { cls: 'c-accent', fill: true })}<p class="t-md">Gratuito e funciona mesmo sem internet no celular.</p></div>
         </section>
-        <section class="stack"><div class="section-head"><h2 class="t-h2 row" style="gap:.4rem">${ic('groups', { cls: 'c-teal', size: 1.9 })}Pessoas de Confiança</h2><span class="pill-info">${VD.CONTACTS.length} contatos</span></div>
+        <section class="stack contacts"><div class="section-head"><h2 class="t-h2 row" style="gap:.4rem">${ic('groups', { cls: 'c-teal', size: 1.9 })}Pessoas de Confiança</h2><span class="pill-info">${VD.CONTACTS.length} contatos</span></div>
           ${VD.CONTACTS.map(contact).join('')}</section>
         <button class="btn lg btn-accent" data-act="askHelp">${ic('notifications_active', { fill: true, size: 1.75 })}<span>Avisar ${esc(cg.name.split(' ')[0])} que preciso de ajuda</span></button>
         <section class="card stack" style="background:var(--accent-soft);border-color:transparent">

@@ -31,7 +31,7 @@
     const fs = S.FONT_STEPS.indexOf(S.settings.fontSize);
     const left = page.back
       ? `<button class="back" data-act="back" aria-label="Voltar para a tela anterior">${ic('arrow_back', { size: 1.75 })}</button><span class="header-title trunc">${esc(page.title || '')}</span>`
-      : `<div class="brand">${LOGO}<b>VivaDia</b></div>`;
+      : `<div class="brand">${LOGO}<b>VivaDia</b></div><span class="header-title desk-only trunc">${esc(page.title || '')}</span>`;
     return `<div class="header-in">
       <div class="row" style="min-width:0">${left}</div>
       <div class="header-right">
@@ -43,9 +43,20 @@
       </div></div>`;
   }
 
-  function navHTML(active) {
-    const items = [['hoje', 'wb_sunny', 'Hoje'], ['agenda', 'calendar_month', 'Agenda'], ['ajuda', 'support', 'Ajuda']];
-    return `<div class="nav-in">${items.map(([id, icon, label]) => `<a href="#/${id}" ${active === id ? 'aria-current="page"' : ''}>${ic(icon)}<span>${label}</span></a>`).join('')}</div>`;
+  function navHTML(active, name) {
+    const desk = window.matchMedia('(min-width: 900px)').matches;
+    const items = [
+      ['hoje', 'wb_sunny', 'Hoje', ['hoje'], false],
+      ['medicamentos', 'pill', 'Medicamentos', ['medicamentos', 'detalhe', 'novoRemedio'], true],
+      ['mental', 'psychology', 'Atividades mentais', ['mental', 'jogo'], true],
+      ['agenda', 'calendar_month', 'Agenda', ['agenda'], false],
+      ['ajuda', 'support', 'Ajuda', ['ajuda'], false],
+    ];
+    const links = items.map(([id, icon, label, names, deskOnly]) => {
+      const here = desk ? names.includes(name) : !deskOnly && active === id;
+      return `<a href="#/${id}"${deskOnly ? ' class="desk-only"' : ''}${here ? ' aria-current="page"' : ''}>${ic(icon)}<span>${label}</span></a>`;
+    }).join('');
+    return `<div class="nav-brand">${LOGO}<b>VivaDia</b></div><div class="nav-in">${links}</div>`;
   }
 
   function render() {
@@ -59,9 +70,11 @@
 
     const header = $('#header'), nav = $('#nav'), view = $('#view');
     header.hidden = !!page.fullscreen;
-    nav.hidden = !page.tab;
+    nav.hidden = !!page.fullscreen;
+    $('#app').classList.toggle('fs', !!page.fullscreen);
+    $('#app').classList.toggle('notab', !page.tab);
     if (!page.fullscreen) header.innerHTML = headerHTML(page);
-    if (page.tab) nav.innerHTML = navHTML(page.tab);
+    if (!page.fullscreen) nav.innerHTML = navHTML(page.tab, name);
     view.className = page.tab ? '' : 'no-nav';
     view.innerHTML = page.html;
     if (page.mount) page.mount(view);
@@ -99,6 +112,7 @@
     render();
     watchReminders();
     setInterval(watchReminders, 15000);
+    window.matchMedia('(min-width: 900px)').addEventListener('change', render); // celular <-> desktop
     setInterval(() => { if (['hoje', 'agenda'].includes(current && current.name) && !document.querySelector('.overlay')) render(); }, 60000);
     window.addEventListener('online', () => current && current.name === 'hoje' && render());
     window.addEventListener('offline', () => current && current.name === 'hoje' && render());
