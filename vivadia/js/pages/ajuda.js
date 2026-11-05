@@ -14,7 +14,7 @@
             <h3 class="t-h3 trunc">${esc(c.name)}</h3><p class="t-md muted" style="font-weight:600">${esc(c.role)}</p>
             ${c.phone && !c.neighbor ? `<p class="t-time-m c-teal" style="letter-spacing:.02em">${esc(c.phone)}</p>` : `<p class="t-bold c-teal">Disponível no prédio</p>`}</div></div>
         <div class="stack">
-          <a class="btn lg ${c.id === cg.id ? 'btn-primary' : 'btn-softteal'}" href="tel:${c.tel}" data-act="callLog" data-name="${esc(c.name)}">${ic(c.clinic ? 'local_hospital' : c.neighbor ? 'door_front' : 'phone', { fill: true, size: 1.75 })}<span>${c.clinic ? 'Ligar para Consultório' : c.neighbor ? 'Chamar Vizinha' : 'Ligar Agora'}</span></a>
+          <a class="btn lg ${c.id === cg.id ? 'btn-primary' : 'btn-softteal'}" href="tel:${c.tel}" data-act="callLog" data-name="${esc(c.name)}">${ic(c.clinic ? 'local_hospital' : c.neighbor ? 'door_front' : 'phone', { fill: true, size: 1.75 })}<span>Ligar Agora</span></a>
           ${c.wa ? `<a class="btn lg btn-wa" href="https://wa.me/${c.wa}" target="_blank" rel="noopener">${ic('chat', { size: 1.75 })}<span>Conversar no WhatsApp</span></a>` : ''}
         </div></article>`;
     };
@@ -25,13 +25,14 @@
       tab: 'ajuda',
       title: 'Ajuda',
       html: ` <div class="page">
-        <section class="card stack" style="background:var(--accent-soft);border-color:transparent">
+        <section class="card stack" style="border-color:transparent">
           <div class="row start"><div class="iconchip round" style="background:var(--accent);color:#fff">${ic('volume_up')}</div>
             <div><h3 class="t-h3" style="color:#341100">Prefere ouvir as instruções?</h3><p class="t-md" style="color:#783100">Toque abaixo e o assistente lê as orientações desta tela em voz alta.</p></div></div>
           <button class="btn btn-accent" id="audioBtn" data-act="audio">${ic(speaking ? 'stop_circle' : 'play_circle', { size: 1.75 })}<span id="audioLabel">${speaking ? 'Parar áudio' : 'Ouvir instruções por voz'}</span></button>
         </section>
         <div class="stack-xs"><div class="row" style="gap:.5rem">${ic('health_and_safety', { fill: true, size: 2, cls: 'c-primary' })}<h1 class="t-h1 c-primary">Central de Ajuda e Apoio</h1></div>
           <p class="t-lg muted">Precisa de auxílio ou companhia? Escolha uma opção com apenas um toque.</p></div>
+           <button class="btn lg btn-accent" data-act="askHelp">${ic('notifications_active', { fill: true, size: 1.75 })}<span>Avisar ${esc(cg.name.split(' ')[0])} que preciso de ajuda</span></button>
         <section class="sos" aria-labelledby="sos-t">
           <div class="row"><div class="iconchip round lg">${ic('emergency_home', { fill: true, size: 2 })}</div>
             <div><h2 class="t-h3" id="sos-t" style="color:var(--error-text)">Emergência Médica</h2><p class="t-md" style="color:var(--error-text);font-weight:600">Atendimento rápido 24 horas</p></div></div>
@@ -39,7 +40,6 @@
         </section>
         <section class="stack contacts"><div class="section-head"><h2 class="t-h2 row" style="gap:.4rem">${ic('groups', { cls: 'c-teal', size: 1.9 })}Pessoas de Confiança</h2><span class="pill-info">${VD.CONTACTS.length} contatos</span></div>
           ${VD.CONTACTS.map(contact).join('')}</section>
-        <button class="btn lg btn-accent" data-act="askHelp">${ic('notifications_active', { fill: true, size: 1.75 })}<span>Avisar ${esc(cg.name.split(' ')[0])} que preciso de ajuda</span></button>
         <section class="stack"><h2 class="t-h2 row" style="gap:.4rem">${ic('help', { cls: 'c-teal', size: 1.9 })}Dúvidas Frequentes</h2>${faq}</section>
       </div>`,
       cleanup() { speaking = false; VD.ui.speech.stop(); },

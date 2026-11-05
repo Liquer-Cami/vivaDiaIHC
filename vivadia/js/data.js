@@ -14,8 +14,8 @@ window.VD = window.VD || {};
 
   VD.CONTACTS = [
     { id: 'c1', name: 'Carla Silveira', role: 'Filha • Cuidadora', short: 'Filha (Cuidadora principal)', phone: '(11) 98765-4321', tel: '11987654321', wa: '5511987654321', main: true },
-    { id: 'c2', name: 'Dr. Eduardo Moreira', role: 'Médico Cardiologista', short: 'Cardiologista', phone: '(11) 3245-1200', tel: '1132451200', clinic: true },
-    { id: 'c3', name: 'Dona Maria', role: 'Vizinha (Apartamento 42)', short: 'Vizinha', phone: '(11) 97123-9876', tel: '11971239876', neighbor: true },
+    { id: 'c2', name: 'Dr. Eduardo Moreira', role: 'Médico', short: 'Cardiologista', phone: '(11) 3245-1200', tel: '1132451200', clinic: true },
+    { id: 'c3', name: 'Dona Maria', role: 'Vizinha', short: 'Vizinha', phone: '(11) 97123-9876', tel: '11971239876', neighbor: true },
   ];
 
   VD.MEDS = [
