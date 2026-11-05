@@ -87,6 +87,7 @@ html {
   font-size: 112.5%;
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
 }
 
 html[data-font="standard"] {
@@ -108,7 +109,9 @@ body {
   font-family: 'Atkinson Hyperlegible Next', system-ui, sans-serif;
   font-size: 1rem;
   line-height: 1.55;
-  overscroll-behavior: none;
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: none;
+  touch-action: pan-y;
 }
 
 button,
@@ -264,6 +267,227 @@ p {
   white-space: nowrap;
 }
 
+/* ---------- Formulários e autenticação ---------- */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+}
+
+.field > label,
+.label {
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+.input,
+select.input,
+textarea.input {
+  width: 100%;
+  min-height: 3.5rem;
+  padding: .7rem 1rem;
+  border: 2px solid var(--pebble);
+  border-radius: 1rem;
+  background: var(--white);
+  font-size: 1.125rem;
+}
+
+.input:focus {
+  border-color: var(--teal);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(15, 92, 99, .18);
+}
+
+.input.bad {
+  border-color: var(--error);
+}
+
+.auth {
+  width: 100%;
+  max-width: 34rem;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 1rem var(--margin) 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg);
+}
+
+.auth-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap);
+}
+
+.auth-top .fontsize {
+  margin-left: auto;
+}
+
+.auth-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: .35rem;
+  padding: .5rem 0;
+}
+
+.auth-brand svg {
+  width: 4.5rem;
+  height: 4.5rem;
+  filter: drop-shadow(0 6px 14px rgba(15, 92, 99, .25));
+}
+
+.pw {
+  position: relative;
+}
+
+.pw .input {
+  padding-right: 4rem;
+}
+
+.pw-toggle {
+  position: absolute;
+  right: .35rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3rem;
+  height: 3rem;
+  border-radius: .9rem;
+  display: grid;
+  place-items: center;
+  color: var(--teal);
+}
+
+.pw-toggle:active {
+  background: var(--teal-tint);
+}
+
+.chk {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  min-height: 3rem;
+  text-align: left;
+}
+
+.chk .box {
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: .6rem;
+  border: 2.5px solid #6f797a;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  color: transparent;
+  flex-shrink: 0;
+  transition: background .15s;
+}
+
+.chk[aria-checked="true"] .box {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #fff;
+}
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: .6rem;
+  padding: .8rem 1rem;
+  border-radius: 1rem;
+  background: var(--error-soft);
+  color: var(--error-text);
+  font-weight: 700;
+  font-size: 1.0625rem;
+  border: 1.5px solid #f3b3ad;
+}
+
+.errmsg {
+  color: var(--error-text);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.or {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  color: var(--text-2);
+  font-weight: 700;
+}
+
+.or::before,
+.or::after {
+  content: '';
+  flex: 1;
+  height: 1.5px;
+  background: var(--pebble);
+}
+
+.strength {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+}
+
+.strength-bar {
+  display: flex;
+  gap: .25rem;
+  width: 5.5rem;
+  flex-shrink: 0;
+}
+
+.strength-bar i {
+  flex: 1;
+  height: .5rem;
+  border-radius: 9999px;
+  background: var(--container-highest);
+}
+
+.strength[data-lv="1"] .strength-bar i:nth-child(-n+1) {
+  background: var(--error);
+}
+
+.strength[data-lv="2"] .strength-bar i:nth-child(-n+2) {
+  background: var(--accent-container);
+}
+
+.strength[data-lv="3"] .strength-bar i {
+  background: var(--green-deep);
+}
+
+.guest-bar {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .5rem var(--margin);
+  background: var(--amber-bg);
+  color: var(--amber-text);
+  border-top: 1.5px solid #f6dc8a;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.3;
+}
+
+.guest-bar .grow {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+.guest-bar button {
+  min-height: 2.5rem;
+  padding: 0 .9rem;
+  border-radius: 9999px;
+  background: var(--amber-text);
+  color: #fff;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 /* ---------- Estrutura ---------- */
 #app {
   min-height: 100vh;
@@ -398,6 +622,7 @@ p {
 
 main {
   flex: 1;
+  min-width: 0;
   padding: 0 0 7.5rem;
 }
 
@@ -487,10 +712,11 @@ main.no-nav {
 .nav {
   position: fixed;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
   width: 100%;
   max-width: 34rem;
+  margin-inline: auto;
   z-index: 30;
   background: var(--white);
   box-shadow: 0 -4px 16px rgba(31, 41, 51, .08);
@@ -696,11 +922,6 @@ main.no-nav {
 .cat-exercise {
   background: var(--green-soft);
   color: #00531c;
-}
-
-.cat-mind {
-  background: var(--indigo-bg);
-  color: var(--indigo);
 }
 
 .cat-text-med {
@@ -1047,6 +1268,8 @@ a.btn {
   gap: var(--gap);
   overflow-x: auto;
   padding: .5rem var(--margin) .75rem;
+  touch-action: pan-x;
+  overscroll-behavior-x: contain;
 }
 
 .day {
@@ -1112,6 +1335,8 @@ a.btn {
   gap: var(--gap);
   overflow-x: auto;
   padding: .25rem var(--margin);
+  touch-action: pan-x;
+  overscroll-behavior-x: contain;
 }
 
 .pill {
@@ -1439,14 +1664,17 @@ textarea.input {
 .reminder {
   min-height: 100vh;
   min-height: 100dvh;
-  padding: 1rem var(--margin) 1.5rem;
+  height: auto;
+  padding: 2rem var(--margin) 4rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
-  gap: var(--gap-lg);
+  gap: 1.25rem;
   background: var(--surface);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .reminder .big-icon {
@@ -1488,197 +1716,6 @@ textarea.input {
   font-weight: 700;
   letter-spacing: -.02em;
   font-variant-numeric: tabular-nums;
-}
-
-/* ---------- Atividades mentais e jogos ---------- */
-.emoji-strip {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: .6rem;
-  font-size: 2.2rem;
-  padding: .75rem;
-  border-radius: 1rem;
-  background: linear-gradient(135deg, var(--teal-fixed), #f3eefe);
-}
-
-.game-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--gap);
-}
-
-.mem-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: .75rem;
-  perspective: 800px;
-}
-
-.mem-card {
-  aspect-ratio: 1 / 1;
-  border-radius: 1.25rem;
-  font-size: 3.2rem;
-  display: grid;
-  place-items: center;
-  background: var(--teal);
-  color: #fff;
-  border: 3px solid var(--primary);
-  box-shadow: var(--shadow-card);
-  position: relative;
-}
-
-.mem-card .ms {
-  font-size: 2.6rem;
-  opacity: .85;
-}
-
-.mem-card.up {
-  background: var(--white);
-  border-color: var(--teal);
-  animation: flip .22s ease-out;
-}
-
-.mem-card.matched {
-  background: var(--green-bg);
-  border-color: var(--green-deep);
-}
-
-.mem-card.matched::after {
-  content: '✓';
-  position: absolute;
-  top: .2rem;
-  right: .55rem;
-  font-size: 1.1rem;
-  color: var(--green-deep);
-  font-weight: 700;
-}
-
-.pair-wrap {
-  display: grid;
-  gap: var(--gap);
-}
-
-.egrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: .35rem;
-  padding: .5rem;
-  background: var(--white);
-  border: 2px solid var(--pebble);
-  border-radius: 1.25rem;
-}
-
-.egrid button,
-.egrid span {
-  aspect-ratio: 1 / 1;
-  display: grid;
-  place-items: center;
-  font-size: 2rem;
-  border-radius: .9rem;
-  background: #f3f8f1;
-  position: relative;
-}
-
-.egrid button:active {
-  background: var(--teal-soft);
-}
-
-.egrid .found {
-  outline: 4px solid var(--green);
-  background: var(--green-bg);
-}
-
-.egrid .wrong {
-  animation: shake .3s;
-  background: var(--error-soft);
-}
-
-.wgrid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: .35rem;
-}
-
-.wgrid button {
-  aspect-ratio: 1 / 1;
-  border-radius: .8rem;
-  background: var(--white);
-  border: 2px solid var(--pebble);
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--primary);
-}
-
-.wgrid button.start {
-  background: var(--accent-soft);
-  border-color: var(--accent-bright);
-}
-
-.wgrid button.found {
-  background: var(--green-soft);
-  border-color: var(--green-deep);
-}
-
-.words {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .5rem;
-}
-
-.words span {
-  padding: .35rem .9rem;
-  border-radius: 9999px;
-  background: var(--container-high);
-  font-weight: 700;
-  letter-spacing: .08em;
-}
-
-.words span.found {
-  background: var(--green-bg);
-  color: var(--green-deep);
-  text-decoration: line-through;
-}
-
-.options {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap);
-}
-
-.option {
-  min-height: 4rem;
-  width: 100%;
-  border-radius: 1.25rem;
-  background: var(--white);
-  border: 2px solid var(--pebble);
-  padding: .75rem 1.1rem;
-  font-weight: 700;
-  font-size: 1.25rem;
-  text-align: left;
-  display: flex;
-  align-items: center;
-  gap: .8rem;
-}
-
-.option:active {
-  background: var(--teal-soft);
-}
-
-.option.right {
-  background: var(--green-bg);
-  border-color: var(--green-deep);
-}
-
-.option.wrong {
-  background: var(--error-soft);
-  border-color: var(--error);
-}
-
-.stars {
-  font-size: 2.2rem;
-  letter-spacing: .2rem;
 }
 
 /* ---------- Ajuda ---------- */
@@ -1986,7 +2023,7 @@ details.faq .answer {
   }
 }
 
-/* Celular: sem barra de baixo em telas sem aba (detalhes, formulários, jogos) */
+/* Celular: sem barra de baixo em telas sem aba (detalhes e formulários) */
 @media (max-width: 899px) {
   #app.notab .nav {
     display: none;
@@ -2020,16 +2057,6 @@ details.faq .answer {
 
   .days .day {
     flex: 1 0 4.5rem;
-  }
-
-  .mem-grid {
-    max-width: 26rem;
-    margin-inline: auto;
-  }
-
-  .wgrid {
-    max-width: 30rem;
-    margin-inline: auto;
   }
 
   .options {
@@ -2068,9 +2095,11 @@ details.faq .answer {
     top: 0;
     bottom: auto;
     left: 0;
+    right: auto;
     transform: none;
     width: var(--side);
     max-width: none;
+    margin-inline: 0;
     height: 100vh;
     height: 100dvh;
     display: flex;
@@ -2269,4 +2298,8 @@ details.faq .answer {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: start;
   }
+}
+
+#app {
+  min-width: 0;
 }

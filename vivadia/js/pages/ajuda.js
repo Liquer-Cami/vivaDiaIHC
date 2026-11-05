@@ -24,26 +24,23 @@
     return {
       tab: 'ajuda',
       title: 'Ajuda',
-      html: `<div class="page">
+      html: ` <div class="page">
+        <section class="card stack" style="background:var(--accent-soft);border-color:transparent">
+          <div class="row start"><div class="iconchip round" style="background:var(--accent);color:#fff">${ic('volume_up')}</div>
+            <div><h3 class="t-h3" style="color:#341100">Prefere ouvir as instruções?</h3><p class="t-md" style="color:#783100">Toque abaixo e o assistente lê as orientações desta tela em voz alta.</p></div></div>
+          <button class="btn btn-accent" id="audioBtn" data-act="audio">${ic(speaking ? 'stop_circle' : 'play_circle', { size: 1.75 })}<span id="audioLabel">${speaking ? 'Parar áudio' : 'Ouvir instruções por voz'}</span></button>
+        </section>
         <div class="stack-xs"><div class="row" style="gap:.5rem">${ic('health_and_safety', { fill: true, size: 2, cls: 'c-primary' })}<h1 class="t-h1 c-primary">Central de Ajuda e Apoio</h1></div>
           <p class="t-lg muted">Precisa de auxílio ou companhia? Escolha uma opção com apenas um toque.</p></div>
         <section class="sos" aria-labelledby="sos-t">
           <div class="row"><div class="iconchip round lg">${ic('emergency_home', { fill: true, size: 2 })}</div>
             <div><h2 class="t-h3" id="sos-t" style="color:var(--error-text)">Emergência Médica</h2><p class="t-md" style="color:var(--error-text);font-weight:600">Atendimento rápido 24 horas</p></div></div>
           <a class="btn xl btn-danger" href="tel:192" data-act="samu" aria-label="Ligar para o SAMU, número 192">${ic('call', { fill: true, size: 2.25 })}<span>LIGAR SAMU (192)</span></a>
-          <div class="row" style="background:rgba(255,255,255,.8);padding:.75rem;border-radius:1rem">${ic('info', { cls: 'c-accent', fill: true })}<p class="t-md">Gratuito e funciona mesmo sem internet no celular.</p></div>
         </section>
         <section class="stack contacts"><div class="section-head"><h2 class="t-h2 row" style="gap:.4rem">${ic('groups', { cls: 'c-teal', size: 1.9 })}Pessoas de Confiança</h2><span class="pill-info">${VD.CONTACTS.length} contatos</span></div>
           ${VD.CONTACTS.map(contact).join('')}</section>
         <button class="btn lg btn-accent" data-act="askHelp">${ic('notifications_active', { fill: true, size: 1.75 })}<span>Avisar ${esc(cg.name.split(' ')[0])} que preciso de ajuda</span></button>
-        <section class="card stack" style="background:var(--accent-soft);border-color:transparent">
-          <div class="row start"><div class="iconchip round" style="background:var(--accent);color:#fff">${ic('volume_up')}</div>
-            <div><h3 class="t-h3" style="color:#341100">Prefere ouvir as instruções?</h3><p class="t-md" style="color:#783100">Toque abaixo e o assistente lê as orientações desta tela em voz alta.</p></div></div>
-          <button class="btn btn-accent" id="audioBtn" data-act="audio">${ic(speaking ? 'stop_circle' : 'play_circle', { size: 1.75 })}<span id="audioLabel">${speaking ? 'Parar áudio' : 'Ouvir instruções por voz'}</span></button>
-        </section>
         <section class="stack"><h2 class="t-h2 row" style="gap:.4rem">${ic('help', { cls: 'c-teal', size: 1.9 })}Dúvidas Frequentes</h2>${faq}</section>
-        <div class="card sunk row"><div class="iconchip round" style="background:#fff;color:var(--teal)">${ic('favorite', { size: 1.75 })}</div>
-          <div><div class="t-bold">Você nunca está sozinho.</div><p class="t-md muted">Seus cuidadores são avisados quando você pede apoio.</p></div></div>
       </div>`,
       cleanup() { speaking = false; VD.ui.speech.stop(); },
     };

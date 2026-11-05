@@ -48,8 +48,18 @@
         <section class="stack"><button class="btn xl btn-primary" id="saveBtn" data-act="savePrefs">${ic('check_circle', { size: 2 })}<span id="saveTxt">Salvar alterações</span></button>
           <p class="t-md muted center row" style="justify-content:center;gap:.4rem">${ic('lock', { cls: 'c-green', size: 1.25 })}Suas preferências ficam salvas no seu aparelho.</p></section>
 
-        <section class="card sunk stack"><h3 class="t-h3">Para demonstração</h3><p class="t-md muted">Volta tudo ao começo: lembretes, remédios, histórico e preferências.</p>
-          <button class="btn btn-dangersoft" data-act="resetDemo">${ic('restart_alt')}<span>Restaurar dados de exemplo</span></button></section>
+        <section class="card stack" aria-labelledby="acc-t"><div class="row">${ic('account_circle', { fill: true, cls: 'c-teal', size: 1.9 })}<h2 class="t-h3" id="acc-t">Minha conta</h2></div>
+          ${VD.auth.isGuest()
+            ? `<p class="t-md muted">Você está como <b>visitante</b>: pode olhar tudo, mas nada é salvo.</p>
+               <button class="btn lg btn-primary" data-act="guestSignup">${ic('person_add', { fill: true })}<span>Criar minha conta</span></button>
+               <button class="btn btn-soft" data-act="logout">${ic('logout')}<span>Sair do modo visitante</span></button>`
+            : `<div class="row"><div class="contact-av">${VD.initial(VD.USER.name)}</div><div style="min-width:0"><div class="t-bold">${esc((VD.auth.user() || {}).name)}</div><div class="t-md muted trunc">${esc((VD.auth.user() || {}).email)}</div></div></div>
+               <button class="btn lg btn-outline" data-act="logout">${ic('logout')}<span>Sair da conta</span></button>
+               <button class="btn btn-dangersoft" data-act="deleteAccount">${ic('person_remove')}<span>Excluir minha conta</span></button>`}
+        </section>
+
+        ${VD.auth.isGuest() ? '' : `<section class="card sunk stack"><h3 class="t-h3">Para demonstração</h3><p class="t-md muted">Volta tudo ao começo: lembretes, remédios, histórico e preferências.</p>
+          <button class="btn btn-dangersoft" data-act="resetDemo">${ic('restart_alt')}<span>Restaurar dados de exemplo</span></button></section>`}
       </div>`,
       mount() { refreshLabels(); },
     };
@@ -98,6 +108,15 @@
     VD.ui.toast('Preferências salvas', { kind: 'ok' });
     setTimeout(() => { t.textContent = 'Salvar alterações'; icon.textContent = 'check_circle'; el.classList.replace('btn-success', 'btn-primary'); }, 2200);
     VD.render(); // atualiza o cabeçalho (A-/A+) — mantém o rascunho
+  });
+  VD.on('logout', async () => {
+    const g = VD.auth.isGuest();
+    const ok = await VD.ui.confirmDialog({ title: g ? 'Sair do modo visitante' : 'Sair da conta', text: g ? 'Voltar para a tela de entrada?' : 'Deseja mesmo sair?', sub: g ? '' : 'Seus dados continuam guardados. Basta entrar de novo.', yes: 'Sim, sair', icon: 'logout' });
+    if (ok) { VD.auth.logout(); VD.ui.toast('Até logo!', { icon: 'waving_hand' }); VD.go('/entrar'); }
+  });
+  VD.on('deleteAccount', async () => {
+    const ok = await VD.ui.confirmDialog({ title: 'Excluir conta', text: 'Excluir sua conta para sempre?', sub: 'Todos os seus lembretes, remédios e histórico serão apagados. Não dá para desfazer.', yes: 'Sim, excluir tudo', icon: 'person_remove', danger: true });
+    if (ok) { VD.auth.deleteAccount(); VD.ui.toast('Conta excluída', { icon: 'delete' }); VD.go('/entrar'); }
   });
   VD.on('resetDemo', async () => {
     const ok = await VD.ui.confirmDialog({ title: 'Restaurar exemplo', text: 'Voltar tudo ao começo?', sub: 'Lembretes, remédios e histórico criados por você serão apagados.', yes: 'Sim, restaurar', icon: 'restart_alt', danger: true });

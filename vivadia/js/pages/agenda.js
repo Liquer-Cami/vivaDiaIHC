@@ -73,7 +73,9 @@
     return {
       tab: 'agenda',
       title: 'Agenda',
-      html: `<button class="btn xl btn-accent" style="margin:10px" data-act="addReminder">${ic('add_circle', { size: 2 })}<span>Adicionar Novo Lembrete</span></button>
+      html: `<div style="padding:0 var(--margin); margin-bottom: 1rem;">
+        <button class="btn xl btn-accent" data-act="addReminder">${ic('add_circle', { size: 2 })}<span>Adicionar Novo Lembrete</span></button>
+      </div>
       <div style="padding:0 var(--margin)">
           <div class="card sunk row between wrap" style="gap:1rem">
             <div class="row start" style="flex: 1 1 12rem; min-width:0;">
@@ -94,8 +96,7 @@
         <div class="filters" role="group" aria-label="Filtrar por tipo">${pills}</div>
         <div class="stack-lg" style="padding:0 var(--margin);">
           ${sections || `<div class="empty">${ic('event_available')}<p class="t-lg">Nenhuma atividade ${filter === 'all' ? 'neste dia' : 'deste tipo neste dia'}.</p></div>`}
-        </div>
-      </div>`,
+        </div>`,
       mount(root) {
         const box = $('#days', root);
         const s = box && box.querySelector('.sel');

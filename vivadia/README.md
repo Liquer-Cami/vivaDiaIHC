@@ -2,6 +2,7 @@
 
 App de rotina para idosos feito só com **HTML, CSS e JavaScript puros**. Sem build, sem npm, sem internet.
 Todos os dados são **mockados** (ficam em `js/data.js`) e as alterações são salvas no `localStorage` do navegador.
+O acesso inclui login, criação de conta, recuperação de senha e modo visitante; esta é uma autenticação local de demonstração.
 
 ## Como abrir
 Dê duplo clique em `index.html`. Pronto.
@@ -17,7 +18,6 @@ Dica: no computador, aperte F12 e ative o modo celular para ver como no telefone
 | Detalhe do medicamento | `#/medicamentos/:id@data` | Como tomar, estoque (diminui ao tomar), histórico, ligar para o cuidador, desfazer, remover remédio |
 | Novo remédio | `#/medicamentos/novo` | Formulário com vários horários; cria os lembretes diários automaticamente |
 | Agenda semanal | `#/agenda` | Escolher o dia da semana, filtrar por tipo, marcar como feito, **criar** e excluir lembretes |
-| Atividades mentais | `#/mental` | 4 jogos jogáveis: Memória, Atenção (3 diferenças), Caça-palavras e Raciocínio. Ao terminar, marca a tarefa do dia como feita |
 | Ajuda e emergência | `#/ajuda` | Ligar SAMU 192, ligar/WhatsApp para contatos, pedir ajuda, **ler instruções em voz alta**, perguntas frequentes |
 | Como quer ser avisado | `#/preferencias` (toque na sua inicial no topo) | Liga/desliga alertas, testar som, trocar familiar, tamanho da letra com prévia, salvar, restaurar dados de exemplo |
 | Lembrete "Hora do remédio" | `#/lembrete/:id` | Tela cheia com som repetido, FEITO, ADIAR 10 min, avisar familiar |
@@ -37,7 +37,8 @@ css/style.css          tokens do design + componentes
 fonts/                 fontes locais (funciona offline)
 js/
   utils.js             datas, ícones, helpers
-  data.js              DADOS MOCKADOS (remédios, rotina, contatos, jogos, FAQ)
+  data.js               DADOS MOCKADOS (remédios, rotina, contatos e FAQ)
+  auth.js               autenticação local de demonstração
   store.js             estado + persistência (localStorage) + regras (feito, adiar, estoque...)
   components.js        toast, diálogos, selos de status, som, voz
   actions.js           ações compartilhadas + folha de detalhes

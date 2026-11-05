@@ -15,9 +15,11 @@
   const routes = [
     [/^\/hoje$/, 'hoje'], [/^\/agenda$/, 'agenda'], [/^\/ajuda$/, 'ajuda'],
     [/^\/medicamentos$/, 'medicamentos'], [/^\/medicamentos\/novo$/, 'novoRemedio'], [/^\/medicamentos\/(.+)$/, 'detalhe'],
-    [/^\/mental$/, 'mental'], [/^\/jogo\/(\w+)$/, 'jogo'],
     [/^\/preferencias$/, 'preferencias'], [/^\/lembrete\/(.+)$/, 'lembrete'],
+    [/^\/entrar$/, 'entrar'], [/^\/cadastro$/, 'cadastro'], [/^\/recuperar$/, 'recuperar'],
   ];
+  const AUTH_ROUTES = ['entrar', 'cadastro', 'recuperar'];
+  const GUEST_BLOCKED = ['novoRemedio', 'lembrete'];
   function match() {
     const path = decodeURIComponent((location.hash || '#/hoje').slice(1)) || '/hoje';
     for (const [re, name] of routes) { const m = path.match(re); if (m) return { name, params: m.slice(1), path }; }
@@ -48,7 +50,6 @@
     const items = [
       ['hoje', 'wb_sunny', 'Hoje', ['hoje'], false],
       ['medicamentos', 'pill', 'Medicamentos', ['medicamentos', 'detalhe', 'novoRemedio'], true],
-      ['mental', 'psychology', 'Atividades mentais', ['mental', 'jogo'], true],
       ['agenda', 'calendar_month', 'Agenda', ['agenda'], false],
       ['ajuda', 'support', 'Ajuda', ['ajuda'], false],
     ];
@@ -60,6 +61,11 @@
   }
 
   function render() {
+    const route = match();
+    const authed = VD.auth.current();
+    if (!authed && !AUTH_ROUTES.includes(route.name)) { location.replace('#/entrar'); return; }
+    if (authed && AUTH_ROUTES.includes(route.name)) { location.replace('#/hoje'); return; }
+    if (authed && authed.guest && GUEST_BLOCKED.includes(route.name)) { VD.auth.blocked(); location.replace('#/hoje'); return; }
     const scroll = window.scrollY;
     const sameRoute = current && current.path === match().path;
     if (current && current.cleanup) { try { current.cleanup(); } catch (e) {} }
@@ -71,9 +77,10 @@
     const header = $('#header'), nav = $('#nav'), view = $('#view');
     header.hidden = !!page.fullscreen;
     nav.hidden = !!page.fullscreen;
+    document.body.classList.toggle('is-guest', !!(authed && authed.guest));
     $('#app').classList.toggle('fs', !!page.fullscreen);
     $('#app').classList.toggle('notab', !page.tab);
-    if (!page.fullscreen) header.innerHTML = headerHTML(page);
+    if (!page.fullscreen) header.innerHTML = headerHTML(page) + (VD.auth.isGuest() ? `<div class="guest-bar" role="status"><span class="grow">${ic('visibility', { size: 1.4 })}Modo visitante: só visualização</span><button data-act="guestSignup">Criar conta</button></div>` : '');
     if (!page.fullscreen) nav.innerHTML = navHTML(page.tab, name);
     view.className = page.tab ? '' : 'no-nav';
     view.innerHTML = page.html;
@@ -85,6 +92,7 @@
 
   VD.on('back', () => VD.back());
   VD.on('prefs', () => VD.go('/preferencias'));
+  VD.on('guestSignup', () => { VD.auth.logout(); VD.go('/cadastro'); });
   VD.on('fontMinus', () => S.stepFont(-1));
   VD.on('fontPlus', () => S.stepFont(1));
 
@@ -94,7 +102,7 @@
   /* ---------- vigia de lembretes: avisa quando chega a hora ---------- */
   function watchReminders() {
     const td = VD.today(), now = VD.toMin(VD.nowTime());
-    if (match().name === 'lembrete') return;
+    if (!VD.auth.isUser() || match().name === 'lembrete') return;
     S.dayTasks(td).forEach((t) => {
       if (t.status === 'done' || t.category === 'consulta') return;
       const diff = now - VD.toMin(t.time);
@@ -108,11 +116,11 @@
   }
 
   function boot() {
+    VD.auth.init();
     applyFont();
     render();
     watchReminders();
     setInterval(watchReminders, 15000);
-    window.matchMedia('(min-width: 900px)').addEventListener('change', render); // celular <-> desktop
     setInterval(() => { if (['hoje', 'agenda'].includes(current && current.name) && !document.querySelector('.overlay')) render(); }, 60000);
     window.addEventListener('online', () => current && current.name === 'hoje' && render());
     window.addEventListener('offline', () => current && current.name === 'hoje' && render());

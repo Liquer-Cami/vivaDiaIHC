@@ -6,10 +6,12 @@
 
   /** Registra um handler para elementos com data-act="nome" */
   VD.on = (name, fn) => { handlers[name] = fn; };
+  const WRITE = new Set(['nextDone', 'nextSnooze', 'medTake', 'medSnooze', 'reconfirm', 'goNewMed', 'detDone', 'detSnooze', 'detUndo', 'delMed', 'agMark', 'addReminder', 'savePrefs', 'resetDemo', 'remDone', 'remSnooze', 'remFamily', 'askHelp', 'swapCaregiver', 'deleteAccount']);
   document.addEventListener('click', (e) => {
     const el = e.target.closest('[data-act]');
     if (!el || el.disabled) return;
     const fn = handlers[el.dataset.act];
+    if (WRITE.has(el.dataset.act) && VD.auth && VD.auth.isGuest()) { e.preventDefault(); VD.auth.blocked(); return; }
     if (fn) { e.preventDefault(); fn(el, e); }
   });
 
@@ -49,7 +51,6 @@
         <div class="stack-xs"><h3 class="t-h2">${esc(t.title)}</h3><p class="t-lg muted">${esc(t.desc || '')}</p></div>
         ${t.note ? `<div class="note row start">${ic('info', { cls: 'c-accent' })}<span class="t-md">${esc(t.note)}</span></div>` : ''}
         <div class="stack">
-          ${t.activityId && t.status !== 'done' ? `<button class="btn lg btn-accent" data-act="playActivity" data-id="${t.activityId}">${ic('play_circle', { fill: true })}<span>Começar agora</span></button>` : ''}
           ${t.status !== 'done' && isPastOrToday ? `<button class="btn lg btn-success" data-sheet-do="done">${ic('check_circle', { fill: true })}<span>FEITO</span></button>
              <button class="btn btn-outline" data-sheet-do="snooze">${ic('update')}<span>ADIAR 10 min</span></button>` : ''}
           ${t.status === 'done' ? `<button class="btn btn-soft" data-sheet-do="undo">${ic('undo')}<span>Desfazer (marcar como pendente)</span></button>` : ''}
@@ -76,5 +77,4 @@
 
   VD.act = act;
   VD.on('openTask', (el) => act.open(el.dataset.key));
-  VD.on('playActivity', (el) => { document.querySelectorAll('.overlay').forEach((o) => o.remove()); document.body.style.overflow = ''; VD.go(`/jogo/${el.dataset.id}`); });
 })(window.VD);

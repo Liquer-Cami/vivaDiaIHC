@@ -1,6 +1,7 @@
 /* VivaDia — estado da aplicação (mock). Persiste no localStorage do navegador. */
 (function (VD) {
-  const KEY = 'vivadia:v1';
+  let KEY = null;        // chave do usuário logado (null = visitante/ninguém)
+  let guest = false;     // visitante: dados de exemplo só na memória, somente leitura
   const DEFAULT_SETTINGS = { bigAlert: true, loudSound: true, notifyFamily: true, fontSize: 'large', caregiverId: 'c1' };
   const FONT_STEPS = ['standard', 'large', 'xlarge'];
   let state;
@@ -30,7 +31,7 @@
     // hoje: tudo que já passou do horário "já foi feito" para a demonstração ficar viva
     const now = VD.nowTime();
     templates.forEach((t) => {
-      if (applies(t, td) && VD.toMin(t.time) < VD.toMin(now) - 90 && t.category !== 'mind') {
+      if (applies(t, td) && VD.toMin(t.time) < VD.toMin(now) - 90) {
         status[`${t.id}@${td}`] = { status: 'done', doneAt: VD.addMinutes(t.time, 4) };
       }
     });
@@ -46,21 +47,33 @@
   }
 
   function load() {
+    if (!KEY) return seed();
     try {
-      const raw = localStorage.getItem(KEY);
-      if (raw) { const s = JSON.parse(raw); if (s && s.v === 1) return s; }
+      const raw = VD.local.get(KEY);
+      if (raw) {
+        const s = JSON.parse(raw);
+        // descarta tarefas de jogos de versões antigas
+        if (s && s.v === 1) { s.templates = (s.templates || []).filter((t) => t.category !== 'mind'); return s; }
+      }
     } catch (e) { /* ignora: segue com dados novos */ }
     return seed();
   }
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* navegação privada */ } }
+  function save() { if (!KEY) return; VD.local.set(KEY, JSON.stringify(state)); }
   function commit() { save(); subs.forEach((fn) => fn()); }
 
-  state = load();
+  state = seed();
 
   /* ---------- leitura ---------- */
   const S = {
     get state() { return state; },
     get settings() { return state.settings; },
+    get guest() { return guest; },
+    /** Troca o "dono" dos dados: usuário (persistente) ou visitante (memória, só leitura) */
+    attach(mode, userId) {
+      guest = mode === 'guest';
+      KEY = mode === 'user' ? `vivadia:data:${userId}` : null;
+      state = mode === 'none' ? seed() : load();
+    },
     subscribe(fn) { subs.push(fn); },
     med: (id) => state.meds.find((m) => m.id === id),
     contact: (id) => VD.CONTACTS.find((c) => c.id === id),
@@ -156,6 +169,15 @@
     notifyFamily(reason) { state.familyLog.push({ date: VD.today(), at: VD.nowTime(), reason, to: S.caregiver.name }); commit(); },
     reset() { state = seed(); commit(); },
   };
+
+  // Visitante só visualiza: qualquer escrita é bloqueada aqui (defesa extra além da interface)
+  ['complete', 'undo', 'snooze', 'reconfirm', 'addTemplate', 'removeTemplate', 'addMed', 'removeMed', 'logActivity', 'notifyFamily', 'reset'].forEach((name) => {
+    const fn = S[name];
+    S[name] = function (...args) {
+      if (guest) { if (VD.auth) VD.auth.blocked(); return null; }
+      return fn.apply(S, args);
+    };
+  });
 
   S.FONT_STEPS = FONT_STEPS;
   VD.store = S;

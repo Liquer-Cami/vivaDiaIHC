@@ -34,5 +34,20 @@ window.VD.pages = window.VD.pages || {};
   const vibrate = (p) => { try { if (navigator.vibrate && (!navigator.userActivation || navigator.userActivation.hasBeenActive)) navigator.vibrate(p); } catch (e) {} };
   const initial = (name) => (name || '?').trim().charAt(0).toUpperCase();
 
-  Object.assign(VD, { WEEKDAYS, WEEKDAYS_SHORT, MONTHS, pad, iso, parseIso, addDays, today, weekday, nowTime, toMin, fromMin, addMinutes, dayMonth, capital, mondayOf, period, esc, ic, $, $$, shuffle, initial, vibrate });
+  /** Armazenamento seguro: se o navegador bloquear localStorage/sessionStorage, usa a memória (não quebra o app) */
+  function safeStore(kind) {
+    const mem = {};
+    let real = null;
+    try { real = window[kind]; real.setItem('__vd', '1'); real.removeItem('__vd'); } catch (e) { real = null; }
+    return {
+      persistent: !!real,
+      get(k) { try { return real ? real.getItem(k) : (k in mem ? mem[k] : null); } catch (e) { return k in mem ? mem[k] : null; } },
+      set(k, v) { try { if (real) { real.setItem(k, v); return; } } catch (e) {} mem[k] = String(v); },
+      remove(k) { try { if (real) real.removeItem(k); } catch (e) {} delete mem[k]; },
+    };
+  }
+  const local = safeStore('localStorage');
+  const session = safeStore('sessionStorage');
+
+  Object.assign(VD, { local, session, WEEKDAYS, WEEKDAYS_SHORT, MONTHS, pad, iso, parseIso, addDays, today, weekday, nowTime, toMin, fromMin, addMinutes, dayMonth, capital, mondayOf, period, esc, ic, $, $$, shuffle, initial, vibrate });
 })(window.VD);
