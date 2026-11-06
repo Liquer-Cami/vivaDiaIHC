@@ -35,6 +35,8 @@
         status[`${t.id}@${td}`] = { status: 'done', doneAt: VD.addMinutes(t.time, 4) };
       }
     });
+    // jogos: a tarefa de atividade mental de hoje fica pendente (para a pessoa jogar)
+    templates.filter((t) => t.category === 'mind').forEach((t) => { delete status[`${t.id}@${td}`]; });
     return {
       v: 1,
       templates,
@@ -52,8 +54,11 @@
       const raw = VD.local.get(KEY);
       if (raw) {
         const s = JSON.parse(raw);
-        // descarta tarefas de jogos de versões antigas
-        if (s && s.v === 1) { s.templates = (s.templates || []).filter((t) => t.category !== 'mind'); return s; }
+        if (s && s.v === 1) {
+          // contas salvas sem a tarefa do jogo de memória: devolve a tarefa
+          if (!(s.templates || []).some((t) => t.id === 't6')) { const t6 = VD.templatesSeed(VD.today()).find((t) => t.id === 't6'); if (t6) s.templates.push(t6); }
+          return s;
+        }
       }
     } catch (e) { /* ignora: segue com dados novos */ }
     return seed();

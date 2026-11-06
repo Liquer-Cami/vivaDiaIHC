@@ -8,6 +8,7 @@ window.VD = window.VD || {};
     consulta: { label: 'Consulta médica', icon: 'medical_services', group: 'med' },
     food:     { label: 'Alimentação',     icon: 'restaurant',      group: 'food' },
     exercise: { label: 'Exercício',       icon: 'directions_walk', group: 'exercise' },
+    mind:     { label: 'Atividade Mental', icon: 'psychology',     group: 'mind' },
   };
 
   VD.USER = { name: 'Helena' };
@@ -34,6 +35,7 @@ window.VD = window.VD || {};
     { id: 't3', time: '12:30', category: 'food', title: 'Almoço', desc: 'Arroz, feijão, frango grelhado e salada de legumes cozidos.' },
     { id: 't4', time: '14:00', category: 'med', medId: 'm2', title: 'Remédio de pressão', desc: 'Tomar 1 comprimido com meio copo de água após o almoço.' },
     { id: 't5', time: '16:00', category: 'exercise', title: 'Caminhada guiada', desc: '20 minutos no jardim ou calçada plana, com tênis confortável.' },
+    { id: 't6', time: '17:00', category: 'mind', activityId: 'memoria', title: 'Jogo de memória', desc: 'Jogo de 5 minutos no aplicativo. Sem pressa!' },
     { id: 't7', time: '19:00', category: 'med', medId: 'm3', title: 'Vitamina D', desc: 'Tomar 1 cápsula antes do jantar.' },
     { id: 't8', time: '19:30', category: 'food', title: 'Jantar leve', desc: 'Sopa de mandioquinha com legumes ou omelete simples.' },
     { id: 't9', time: '21:00', category: 'food', title: 'Chá calmante', desc: 'Infusão morna de camomila com melissa para dormir bem.' },
@@ -46,5 +48,29 @@ window.VD = window.VD || {};
   ];
 
   VD.AUDIO_GUIDE = 'Você está na Central de Ajuda VivaDia. No topo da tela há um botão vermelho grande para ligar direto para o SAMU, número 192. Logo abaixo estão os telefones da sua filha Carla, do seu cardiologista Doutor Eduardo e da sua vizinha Dona Maria. Toque no botão para ligar.';
+
+  /* ---------- Atividades mentais ---------- */
+  VD.ACTIVITIES = [
+    { id: 'memoria', title: 'Jogo de memória', cat: 'Memória', icon: 'style', desc: 'Guarde imagens e encontre os pares no seu ritmo, exercitando o foco.', cta: 'Jogar Memória', strip: '🍎 🍌 🍇', minutes: 5 },
+    { id: 'atencao', title: 'Atenção e Foco', cat: 'Atenção', icon: 'travel_explore', desc: 'Ache as 3 diferenças entre os dois jardins.', cta: 'Explorar Atenção', strip: '🌻 🌷 🦋', minutes: 5 },
+    { id: 'palavras', title: 'Palavras', cat: 'Palavras', icon: 'spellcheck', desc: 'Caça-palavras fácil com letras grandes e temas do dia a dia.', cta: 'Explorar Palavras', strip: 'F L O R', minutes: 5 },
+    { id: 'raciocinio', title: 'Raciocínio', cat: 'Raciocínio', icon: 'extension', desc: 'Sequências lógicas e charadas divertidas do cotidiano.', cta: 'Explorar Raciocínio', strip: '2 · 4 · 6 · ?', minutes: 5 },
+  ];
+
+  VD.MEMORY_EMOJIS = ['🍎', '🍌', '🍇', '🍊', '🌻', '🌷'];
+  VD.ATTENTION_POOL = ['🌻', '🌷', '🌼', '🌳', '🦋', '🐝', '🍄', '🌿'];
+  VD.WORDSEARCH = {
+    size: 6,
+    // [palavra, linha, coluna, passo na linha, passo na coluna]
+    words: [['FLOR', 0, 0, 0, 1], ['SOL', 2, 1, 0, 1], ['CAFE', 0, 5, 1, 0], ['LUA', 5, 0, 0, 1]],
+    filler: 'MPTDNRBGVHIEUAOSCMLRTNPDEG',
+  };
+  VD.RIDDLES = [
+    { q: 'Qual número continua a sequência?  2 · 4 · 6 · ?', opts: ['7', '8', '9'], a: 1, hint: 'Vai de dois em dois.' },
+    { q: 'Manhã, tarde, … O que vem depois?', opts: ['Almoço', 'Noite', 'Ontem'], a: 1, hint: 'Pense nas partes do dia.' },
+    { q: 'Qual destes NÃO é uma fruta?', opts: ['Banana', 'Cadeira', 'Uva'], a: 1, hint: 'Uma delas não se come.' },
+    { q: 'Qual número falta?  10 · 20 · ? · 40', opts: ['25', '30', '35'], a: 1, hint: 'Vai de dez em dez.' },
+    { q: 'O que usamos para ver as horas?', opts: ['Relógio', 'Escova', 'Colher'], a: 0, hint: 'Ele tem ponteiros.' },
+  ];
 
 })(window.VD);

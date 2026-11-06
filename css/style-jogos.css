@@ -1,0 +1,265 @@
+/* ==========================================================================
+   ATIVIDADES MENTAIS E JOGOS
+   Cole este bloco no FINAL do style.css (não altera nada do que já existe).
+   Usa as mesmas variáveis e se encaixa no layout responsivo atual
+   (a largura da tela/menu lateral continua sendo controlada pelo seu CSS).
+   ========================================================================== */
+
+/* cor da categoria "mente" (atalho em Hoje, Agenda e lembretes) */
+.cat-mind {
+  background: var(--indigo-bg);
+  color: var(--indigo);
+}
+
+/* faixa de emojis dos cartões */
+.emoji-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .6rem;
+  font-size: 2.2rem;
+  padding: .75rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, var(--teal-fixed), #f3eefe);
+}
+
+/* lista de atividades: 1 coluna no celular, 2+ colunas quando houver espaço */
+.mental-cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  gap: var(--gap);
+}
+
+.mental-cols>.card {
+  height: 100%;
+}
+
+/* página de um jogo: centralizada e com largura confortável */
+.game {
+  width: 100%;
+  max-width: 46rem;
+  margin-inline: auto;
+}
+
+/* ---------- Jogo da memória ---------- */
+.mem-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .75rem;
+  perspective: 800px;
+  width: 100%;
+  margin-inline: auto;
+}
+
+.mem-card {
+  aspect-ratio: 1 / 1;
+  border-radius: 1.25rem;
+  font-size: clamp(2.4rem, 11vw, 3.4rem);
+  display: grid;
+  place-items: center;
+  background: var(--teal);
+  color: #fff;
+  border: 3px solid var(--primary);
+  box-shadow: var(--shadow-card);
+  position: relative;
+}
+
+.mem-card .ms {
+  font-size: 2.6rem;
+  opacity: .85;
+}
+
+.mem-card.up {
+  background: var(--white);
+  border-color: var(--teal);
+  animation: flip .22s ease-out;
+}
+
+.mem-card.matched {
+  background: var(--green-bg);
+  border-color: var(--green-deep);
+}
+
+.mem-card.matched::after {
+  content: '✓';
+  position: absolute;
+  top: .2rem;
+  right: .55rem;
+  font-size: 1.1rem;
+  color: var(--green-deep);
+  font-weight: 700;
+}
+
+/* ---------- Atenção e foco (3 diferenças) ---------- */
+.pair-wrap {
+  display: grid;
+  gap: var(--gap);
+}
+
+.egrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: .35rem;
+  padding: .5rem;
+  background: var(--white);
+  border: 2px solid var(--pebble);
+  border-radius: 1.25rem;
+}
+
+.egrid button,
+.egrid span {
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  font-size: clamp(1.8rem, 8vw, 2.4rem);
+  border-radius: .9rem;
+  background: #f3f8f1;
+  position: relative;
+}
+
+.egrid button:active {
+  background: var(--teal-soft);
+}
+
+.egrid .found {
+  outline: 4px solid var(--green);
+  background: var(--green-bg);
+}
+
+.egrid .wrong {
+  animation: shake .3s;
+  background: var(--error-soft);
+}
+
+/* ---------- Caça-palavras ---------- */
+.wgrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: .35rem;
+  width: 100%;
+  max-width: 30rem;
+  margin-inline: auto;
+}
+
+.wgrid button {
+  aspect-ratio: 1 / 1;
+  border-radius: .8rem;
+  background: var(--white);
+  border: 2px solid var(--pebble);
+  font-size: clamp(1.4rem, 6.5vw, 1.9rem);
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.wgrid button.start {
+  background: var(--accent-soft);
+  border-color: var(--accent-bright);
+}
+
+.wgrid button.found {
+  background: var(--green-soft);
+  border-color: var(--green-deep);
+}
+
+.words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.words span {
+  padding: .35rem .9rem;
+  border-radius: 9999px;
+  background: var(--container-high);
+  font-weight: 700;
+  letter-spacing: .08em;
+}
+
+.words span.found {
+  background: var(--green-bg);
+  color: var(--green-deep);
+  text-decoration: line-through;
+}
+
+/* ---------- Raciocínio ---------- */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.option {
+  min-height: 4rem;
+  width: 100%;
+  border-radius: 1.25rem;
+  background: var(--white);
+  border: 2px solid var(--pebble);
+  padding: .75rem 1.1rem;
+  font-weight: 700;
+  font-size: 1.25rem;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+}
+
+.option:active {
+  background: var(--teal-soft);
+}
+
+.option.right {
+  background: var(--green-bg);
+  border-color: var(--green-deep);
+}
+
+.option.wrong {
+  background: var(--error-soft);
+  border-color: var(--error);
+}
+
+/* ---------- Tela de resultado ---------- */
+.stars {
+  font-size: 2.2rem;
+  letter-spacing: .2rem;
+}
+
+/* ---------- Telas maiores: só ajustes dos jogos ---------- */
+@media (min-width: 700px) {
+  .mem-grid {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 38rem;
+    gap: 1rem;
+  }
+
+  .egrid {
+    gap: .5rem;
+    padding: .75rem;
+  }
+
+  .game .options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    max-width: none;
+  }
+
+  .game .option {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    min-height: 6rem;
+  }
+}
+
+/* celular deitado / telas baixas: cartas em 4 colunas para caber na altura */
+@media (max-height: 520px) and (orientation: landscape) {
+  .mem-grid {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 30rem;
+    gap: .5rem;
+  }
+
+  .egrid button,
+  .egrid span {
+    font-size: 1.6rem;
+  }
+}

@@ -16,10 +16,12 @@
     [/^\/hoje$/, 'hoje'], [/^\/agenda$/, 'agenda'], [/^\/ajuda$/, 'ajuda'],
     [/^\/medicamentos$/, 'medicamentos'], [/^\/medicamentos\/novo$/, 'novoRemedio'], [/^\/medicamentos\/(.+)$/, 'detalhe'],
     [/^\/preferencias$/, 'preferencias'], [/^\/lembrete\/(.+)$/, 'lembrete'],
+    [/^\/mental$/, 'mental'], [/^\/jogo\/(\w+)$/, 'jogo'],
     [/^\/entrar$/, 'entrar'], [/^\/cadastro$/, 'cadastro'], [/^\/recuperar$/, 'recuperar'],
   ];
   const AUTH_ROUTES = ['entrar', 'cadastro', 'recuperar'];
   const GUEST_BLOCKED = ['novoRemedio', 'lembrete'];
+  GUEST_BLOCKED.push('jogo'); // visitante só visualiza: não abre os jogos
   function match() {
     const path = decodeURIComponent((location.hash || '#/hoje').slice(1)) || '/hoje';
     for (const [re, name] of routes) { const m = path.match(re); if (m) return { name, params: m.slice(1), path }; }

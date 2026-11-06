@@ -57,6 +57,7 @@
       ['medicamentos', 'pill', 'Medicamentos', 'cat-med', '/medicamentos'],
       ['food', 'restaurant', 'Alimentação', 'cat-food', null],
       ['exercise', 'directions_walk', 'Exercícios', 'cat-exercise', null],
+      ['mental', 'psychology', 'Atividades Mentais', 'cat-mind', '/mental'],
     ].map(([id, icon, label, cls, route]) => `<button class="area" data-act="area" data-id="${id}" ${route ? `data-route="${route}"` : ''}>
         <div class="iconchip ${cls}">${ic(icon, { fill: true })}</div><span>${label}</span></button>`).join('');
 
