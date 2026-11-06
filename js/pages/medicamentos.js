@@ -16,7 +16,7 @@
       const isCur = current && current.key === t.key;
       const doneCard = t.status === 'done';
       return `<article class="card ${isCur ? 'accent-left' : ''} stack" style="${doneCard ? 'opacity:.96' : ''}">
-        <div class="row start between">
+        <div class="row start between card-head">
           <div class="row">
             <div class="iconchip ${doneCard ? '' : 'cat-med'}" style="${doneCard ? 'background:var(--green-soft);color:#00531c' : ''}">${ic(doneCard ? 'done' : isCur ? 'medication_liquid' : 'medication', { fill: true, size: 1.75 })}</div>
             <div><span class="t-time-m">${t.time}</span><p class="t-small ${isCur ? 'c-accent' : 'muted'}">${isCur ? 'Horário atual' : esc(m.dose || '')}</p></div>
@@ -40,7 +40,6 @@
     return {
       tab: 'hoje',
       title: 'Medicamentos',
-      back: true,
       html: `<div class="page">
       
         <button class="btn lg btn-accent" data-act="goNewMed">${ic('add_circle', { size: 2 })}<span>Adicionar Remédio</span></button>

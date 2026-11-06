@@ -19,22 +19,22 @@
           <h1 class="t-h1">Como quer ser avisado?</h1><p class="t-md muted">Personalize os alarmes e o tamanho do texto para ver e ouvir com facilidade.</p></div>
 
         <section class="stack"><div class="row c-teal">${ic('notifications_active')}<h2 class="t-h3" style="color:var(--text)">Tipos de Alerta</h2></div>
-          <div class="card stack"><div class="row start"><div class="iconchip" style="background:var(--teal-fixed);color:var(--primary)">${ic('open_in_full', { fill: true, size: 1.75 })}</div>
+          <div class="card stack"><div class="row start pref-row"><div class="iconchip" style="background:var(--teal-fixed);color:var(--primary)">${ic('open_in_full', { fill: true, size: 1.75 })}</div>
             <div class="grow"><h3 class="t-h3">Aviso grande na tela</h3><p class="t-md muted">Mostra um aviso em tela cheia, com letras bem grandes, na hora de cada remédio ou atividade.</p></div>${toggle('bigAlert', 'Aviso grande na tela')}</div>
-            <div class="row between"><span class="t-small c-green" id="lbl-bigAlert"></span><span class="t-small muted">Recomendado</span></div>
+            <div class="row between"><span class="t-small c-green" id="lbl-bigAlert"></span></div>
             <button class="btn btn-softteal" data-act="testReminder">${ic('visibility')}<span>Ver como é o aviso</span></button></div>
 
-          <div class="card stack"><div class="row start"><div class="iconchip" style="background:var(--accent-soft);color:#341100">${ic('volume_up', { fill: true, size: 1.75 })}</div>
+          <div class="card stack"><div class="row start pref-row"><div class="iconchip" style="background:var(--accent-soft);color:#341100">${ic('volume_up', { fill: true, size: 1.75 })}</div>
             <div class="grow"><h3 class="t-h3">Som forte e repetido</h3><p class="t-md muted">Toca um som alto e claro que repete até você responder ou adiar.</p></div>${toggle('loudSound', 'Som forte e repetido')}</div>
             <div class="row between"><span class="t-small c-green" id="lbl-loudSound"></span>
               <button class="btn sm btn-softteal" style="width:auto" data-act="testSound">${ic('play_circle')}<span>Ouvir teste</span></button></div></div>
 
-          <div class="card stack"><div class="row start"><div class="iconchip" style="background:var(--container-high);color:var(--teal)">${ic('diversity_1', { fill: true, size: 1.75 })}</div>
+          <div class="card stack"><div class="row start pref-row"><div class="iconchip" style="background:var(--container-high);color:var(--teal)">${ic('diversity_1', { fill: true, size: 1.75 })}</div>
             <div class="grow"><h3 class="t-h3">Avisar um familiar</h3><p class="t-md muted">Envia um aviso no WhatsApp do cuidador se um remédio importante não for marcado a tempo.</p></div>${toggle('notifyFamily', 'Avisar um familiar')}</div>
-            <div class="card tint flat stack-xs" style="padding:.8rem 1rem"><span class="t-small muted">Familiar responsável conectado:</span>
-              <div class="row between"><div class="row"><div class="contact-av" id="cgAv" style="width:3.25rem;height:3.25rem;font-size:1.3rem">${VD.initial(cg.name)}</div>
-                <div><div class="t-bold" id="cgName">${esc(cg.name)}</div><div class="t-small c-teal" id="cgRole">${esc(cg.short)}</div><div class="t-small muted" id="cgPhone">${esc(cg.phone)}</div></div></div>
-                <button class="btn sm btn-soft" style="width:auto" data-act="swapCaregiver">${ic('swap_horiz')}<span>Trocar</span></button></div></div></div>
+            <div class="card tint flat stack-xs" style="padding:.8rem 1rem"><span class="t-small muted">Familiar responsável:</span>
+              <div class="row between cg-row"><div class="row"><div class="contact-av" id="cgAv" style="width:3.25rem;height:3.25rem;font-size:1.3rem">${VD.initial(cg.name)}</div>
+                <div><div class="t-bold" id="cgName">${esc(cg.name)}</div><div class="t-small c-teal" id="cgRole">${esc(cg.short)}</div><div class="t-small muted" id="cgPhone">${esc(cg.phone)}</div></div></div></div></div>
+                <button class="btn sm btn-soft" style="width:auto" data-act="swapCaregiver">${ic('swap_horiz')}<span>Trocar</span></button></div>
         </section>
 
         <section class="stack"><div class="row c-teal">${ic('text_fields')}<h2 class="t-h3" style="color:var(--text)">Tamanho das letras</h2></div>
@@ -67,8 +67,6 @@
 
   function refreshLabels() {
     const set = (k, on, a, b) => { const el = document.getElementById('lbl-' + k); if (el) el.textContent = on ? a : b; };
-    set('bigAlert', draft.bigAlert, '● Ativado (tela cheia)', '○ Desativado');
-    set('loudSound', draft.loudSound, '● Toque nítido e volume 100%', '○ Desativado (som baixo)');
   }
 
   VD.on('toggle', (el) => {

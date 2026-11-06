@@ -51,13 +51,16 @@
     const desk = window.matchMedia('(min-width: 900px)').matches;
     const items = [
       ['hoje', 'wb_sunny', 'Hoje', ['hoje'], false],
-      ['medicamentos', 'pill', 'Medicamentos', ['medicamentos', 'detalhe', 'novoRemedio'], true],
+      ['medicamentos', 'pill', 'Medicamentos', ['medicamentos', 'detalhe', 'novoRemedio'], false],
       ['agenda', 'calendar_month', 'Agenda', ['agenda'], false],
       ['ajuda', 'support', 'Ajuda', ['ajuda'], false],
     ];
+    const MED = ['medicamentos', 'detalhe', 'novoRemedio'];
     const links = items.map(([id, icon, label, names, deskOnly]) => {
-      const here = desk ? names.includes(name) : !deskOnly && active === id;
-      return `<a href="#/${id}"${deskOnly ? ' class="desk-only"' : ''}${here ? ' aria-current="page"' : ''}>${ic(icon)}<span>${label}</span></a>`;
+      // desktop: destaca pela rota; celular: pela aba, mas as telas de medicamento acendem "Medicamentos"
+      const here = desk ? names.includes(name) : (active === id && !MED.includes(name)) || (id === 'medicamentos' && MED.includes(name));
+      const text = id === 'medicamentos' ? `<span class="lbl-m">Medicamentos</span><span class="lbl-d">${label}</span>` : `<span>${label}</span>`;
+      return `<a href="#/${id}"${deskOnly ? ' class="desk-only"' : ''}${here ? ' aria-current="page"' : ''}>${ic(icon)}${text}</a>`;
     }).join('');
     return `<div class="nav-brand">${LOGO}<b>VivaDia</b></div><div class="nav-in">${links}</div>`;
   }

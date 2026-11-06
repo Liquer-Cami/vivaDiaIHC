@@ -274,7 +274,7 @@ p {
   gap: .4rem;
 }
 
-.field > label,
+.field>label,
 .label {
   font-weight: 700;
   font-size: 1.125rem;
@@ -2302,4 +2302,429 @@ details.faq .answer {
 
 #app {
   min-width: 0;
+}
+
+/* ==========================================================================
+   AJUSTES MOBILE (até 599px)
+   Selos/tags (PENDENTE, FEITA, ADIADA...) nunca ficam ao lado do texto:
+   descem para a linha de baixo, alinhados com o texto do cartão.
+   ========================================================================== */
+
+/* Base: colunas de grid podem encolher e textos longos quebram (sem overflow:hidden) */
+.page,
+.card,
+.task-row,
+.task-card,
+.modal {
+  min-width: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+.t-bold,
+.t-md,
+.t-lg {
+  overflow-wrap: anywhere;
+}
+
+.badge,
+.pill-info {
+  max-width: 100%;
+}
+
+@media (max-width: 599px) {
+
+  /* ---------- Cabeçalho: A-/A+ não sobrepõe a marca ---------- */
+  .header-in {
+    gap: .5rem;
+  }
+
+  .header-in>.row {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .brand {
+    flex: 1 1 auto;
+  }
+
+  .brand b {
+    white-space: nowrap;
+  }
+
+  .header-right {
+    flex-shrink: 0;
+    gap: .4rem;
+  }
+
+  .guest-bar {
+    flex-wrap: wrap;
+  }
+
+  /* ---------- HOJE: lista de atividades ---------- */
+  .task-row {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    row-gap: .6rem;
+    padding: 1rem;
+  }
+
+  .task-row>.grow {
+    flex: 1 1 100%;
+    align-items: flex-start;
+  }
+
+  .task-row .txt {
+    flex: 1 1 0;
+  }
+
+  /* selo desce para a linha de baixo, alinhado ao texto (após o ícone de 3rem) */
+  .task-row>.badge {
+    margin-left: calc(3rem + var(--gap));
+  }
+
+  /* "Próxima atividade" + selo */
+  .d-next .row.between {
+    flex-wrap: wrap;
+    row-gap: .5rem;
+  }
+
+  .t-time {
+    font-size: 2rem;
+  }
+
+  /* ---------- MEDICAMENTOS ---------- */
+  .card-head {
+    flex-wrap: wrap;
+    row-gap: .6rem;
+  }
+
+  .card-head>.row {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .card-head>.badge {
+    margin-left: calc(3rem + var(--gap));
+  }
+
+  .card-head .t-small {
+    overflow-wrap: anywhere;
+  }
+
+  /* histórico do detalhe do remédio */
+  .hist {
+    flex-wrap: wrap;
+    row-gap: .5rem;
+  }
+
+  .hist>.badge {
+    margin-left: 0;
+  }
+
+  /* ---------- AGENDA ---------- */
+  .tc-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: .6rem !important;
+  }
+
+  .tc-main {
+    flex: 1 1 auto !important;
+    width: 100%;
+  }
+
+  .tc-badge {
+    flex: 0 0 auto;
+  }
+
+  .task-card {
+    padding: 1rem;
+  }
+
+  .task-card .note {
+    flex-wrap: nowrap;
+  }
+
+  .period {
+    flex-wrap: wrap;
+  }
+
+  /* ---------- ATIVIDADES MENTAIS ---------- */
+  .card .row.between.wrap {
+    row-gap: .6rem;
+  }
+
+  /* ---------- AJUDA ---------- */
+  .contacts .t-time-m {
+    font-size: 1.5rem;
+    overflow-wrap: anywhere;
+  }
+
+  .contacts .row>div[style*="min-width:0"] {
+    flex: 1 1 0;
+  }
+
+  details.faq summary {
+    align-items: flex-start;
+  }
+
+  details.faq summary>span {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  /* ---------- PREFERÊNCIAS ---------- */
+  .pref-row {
+    flex-wrap: wrap;
+    row-gap: .75rem;
+  }
+
+  .pref-row>.grow {
+    flex: 1 1 calc(100% - 3rem - var(--gap));
+  }
+
+  /* o botão liga/desliga desce para a linha de baixo */
+  .pref-row>.switch {
+    margin-left: calc(3rem + var(--gap));
+  }
+
+  .cg-row {
+    flex-wrap: wrap;
+    row-gap: .6rem;
+  }
+
+  .cg-row>.row {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .cg-row>.btn {
+    width: 100%;
+  }
+
+  /* ---------- LEMBRETE em tela cheia ---------- */
+  .reminder .pill-info {
+    border-radius: 1rem;
+    text-align: left;
+    white-space: normal;
+  }
+
+  .reminder .clock {
+    font-size: 3.75rem;
+  }
+
+  /* ---------- Botões de ação lado a lado: empilham se faltar espaço ---------- */
+  .grid2 .btn {
+    padding-inline: .6rem;
+  }
+
+  .modal {
+    padding: 1.25rem;
+  }
+}
+
+/* Celulares bem estreitos (até 360px) */
+@media (max-width: 360px) {
+  :root {
+    --margin: .875rem;
+  }
+
+  .header-in {
+    padding-left: .75rem;
+    padding-right: .75rem;
+  }
+
+  .brand svg {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .brand b {
+    font-size: 1.1rem;
+  }
+
+  .brand {
+    gap: .4rem;
+  }
+
+  .fontsize {
+    height: 2.5rem;
+  }
+
+  .fontsize button {
+    min-width: 2.25rem;
+    padding: 0 .3rem;
+    font-size: .9rem;
+  }
+
+  .avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1rem;
+  }
+
+  .task-row>.badge,
+  .card-head>.badge,
+  .pref-row>.switch {
+    margin-left: 0;
+  }
+
+  .d-next .grid2 {
+    grid-template-columns: 1fr;
+  }
+
+  .badge {
+    font-size: .9rem;
+  }
+}
+
+
+/* ==========================================================================
+   CORREÇÃO DE OVERFLOW (causa raiz)
+   Colunas 1fr não encolhem abaixo do conteúdo (min-width:auto), então
+   palavras longas ("Alimentação", "Atividades Mentais") empurravam a grade
+   para fora da tela. minmax(0,1fr) deixa a coluna encolher e o texto quebrar.
+   ========================================================================== */
+.grid2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid2>*,
+.area,
+.mental-cols>*,
+.seg>*,
+.mem-grid>* {
+  min-width: 0;
+}
+
+.area {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+.area>span {
+  max-width: 100%;
+}
+
+.seg {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.mem-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.nav-in {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.nav a {
+  min-width: 0;
+  text-align: center;
+}
+
+@media (max-width: 599px) {
+  .area {
+    padding: .75rem .5rem;
+    font-size: 1rem;
+  }
+
+  .area .iconchip {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .nav a {
+    font-size: .9375rem;
+  }
+}
+
+/* fonte extra grande em tela estreita: áreas em 1 coluna */
+@media (max-width: 420px) {
+  html[data-font="xlarge"] .d-areas .grid2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+
+/* Ajuda: telefone e nome nunca empurram o card */
+.contacts .card>.row>div {
+  min-width: 0;
+}
+
+.contacts .t-time-m {
+  overflow-wrap: anywhere;
+}
+
+/* Caça-palavras: colunas que encolhem, botões sem padding extra */
+.wgrid {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.wgrid button {
+  min-width: 0;
+  padding: 0;
+  font-size: clamp(1.1rem, 5.5vw, 1.9rem);
+}
+
+.words span {
+  letter-spacing: .04em;
+}
+
+
+/* ==========================================================================
+   MENU INFERIOR COM 4 ATALHOS: Hoje · Medicamentos · Agenda · Ajuda
+   ========================================================================== */
+.nav-in {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.nav .lbl-d {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .nav-in {
+    padding: 0 .25rem;
+  }
+
+  .nav a {
+    margin: .5rem .125rem;
+    font-size: .875rem;
+    line-height: 1.2;
+    gap: .15rem;
+  }
+
+  .nav a .ms {
+    font-size: 1.6rem;
+  }
+
+  .nav a span {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .nav a .lbl-m {
+    font-size: .75rem;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 380px) {
+  .nav a {
+    font-size: .8125rem;
+  }
+}
+
+@media (min-width: 900px) {
+  .nav .lbl-m {
+    display: none;
+  }
+
+  .nav .lbl-d {
+    display: inline;
+  }
 }

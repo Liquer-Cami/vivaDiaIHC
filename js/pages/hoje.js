@@ -54,9 +54,6 @@
     }).join('');
 
     const areas = [
-      ['medicamentos', 'pill', 'Medicamentos', 'cat-med', '/medicamentos'],
-      ['food', 'restaurant', 'Alimentação', 'cat-food', null],
-      ['exercise', 'directions_walk', 'Exercícios', 'cat-exercise', null],
       ['mental', 'psychology', 'Atividades Mentais', 'cat-mind', '/mental'],
     ].map(([id, icon, label, cls, route]) => `<button class="area" data-act="area" data-id="${id}" ${route ? `data-route="${route}"` : ''}>
         <div class="iconchip ${cls}">${ic(icon, { fill: true })}</div><span>${label}</span></button>`).join('');
@@ -67,7 +64,6 @@
       html: `
       <div class="page dash" style="padding-left:0;padding-right:0">
         <div class="px d-status" style="padding:0 var(--margin)">
-          <span class="pill-info">${ic(online ? 'check_circle' : 'cloud_off', { fill: true, cls: 'c-green' })}${online ? 'Lembretes ativos' : 'Sem internet: lembretes ativos'}</span>
         </div>
         <div class="stack d-prog" style="padding:0 var(--margin)">
           <h1 class="t-h1">${VD.capital(title)}</h1>
@@ -83,7 +79,7 @@
           ${rows || '<div class="empty">' + ic('event_available') + '<p class="t-lg">Nenhuma atividade para hoje.</p></div>'}
         </section>
         <section class="stack d-areas" style="padding:0 var(--margin)" aria-labelledby="areas">
-          <div class="section-head"><h2 class="t-h3" id="areas">Áreas de Cuidado</h2><span class="t-small muted">Acesso rápido</span></div>
+          <div class="section-head"><h2 class="t-h3" id="areas">Área de Atividades</h2></div>
           <div class="grid2">${areas}</div>
         </section>
       </div>`,
