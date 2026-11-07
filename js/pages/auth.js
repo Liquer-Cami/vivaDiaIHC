@@ -9,7 +9,7 @@
   const pwField = (id, label, auto, hint = '') => `<div class="field"><label for="${id}">${label}</label>
     <div class="pw"><input class="input" id="${id}" type="password" autocomplete="${auto}" placeholder="Digite sua senha" /><button type="button" class="pw-toggle" data-act="togglePw" data-for="${id}" aria-label="Mostrar senha">${ic('visibility')}</button></div>
     ${hint}<span class="errmsg" id="e-${id}" role="alert" hidden></span></div>`;
-  const err = (root, id, msg) => { const el = $('#e-' + id, root); if (!el) return; el.hidden = !msg; el.innerHTML = msg ? `${ic('error', { size: 1.2, fill: true })} ${esc(msg)}` : ''; const inp = $('#' + id, root); if (inp) inp.classList.toggle('bad', !!msg); };
+  const err = (root, id, msg) => { const el = $('#e-' + id, root); if (!el) return; el.hidden = !msg; el.innerHTML = msg ? `${ic('error', { size: 1.2, fill: true })} ${esc(msg)}` : ''; const inp = $('#' + id, root); if (inp) { inp.classList.toggle('bad', !!msg); inp.setAttribute('aria-invalid', String(!!msg)); } };
   const banner = (root, msg) => { const b = $('#alert', root); b.hidden = !msg; b.innerHTML = msg ? `${ic('error', { fill: true })}<span>${esc(msg)}</span>` : ''; };
   const eyeToggle = (root) => root.querySelectorAll('[data-act="togglePw"]').forEach(() => {});
 
@@ -89,7 +89,8 @@
         <div class="field"><label for="r-phone">Celular <span class="muted" style="font-weight:400">(opcional)</span></label><input class="input" id="r-phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="(11) 91234-5678" maxlength="15" /></div>
         ${pwField('r-pass', 'Crie uma senha <span style="color:var(--error-text); font-weight:400">(Obrigatório)</span>', 'new-password', strengthHTML)}
         ${pwField('r-pass2', 'Repita a senha <span style="color:var(--error-text); font-weight:400">(Obrigatório)</span>', 'new-password')}
-        <div><button type="button" class="chk" role="checkbox" aria-checked="false" id="terms" data-act="chk"><span class="box">${ic('check', { size: 1.5 })}</span><span class="t-md">Li e aceito os <a href="#" data-act="showTerms" style="color:var(--primary);font-weight:700;text-decoration:underline">termos de uso</a> <span style="color:var(--error-text); font-weight:400">(Obrigatório)</span></span></button>
+        <div class="stack-xs"><button type="button" class="chk" role="checkbox" aria-checked="false" id="terms" data-act="chk"><span class="box">${ic('check', { size: 1.5 })}</span><span class="t-md">Li e aceito os termos de uso <span style="color:var(--error-text); font-weight:400">(Obrigatório)</span></span></button>
+          <button type="button" class="btn-link" style="align-self:flex-start" data-act="showTerms">${ic('description')}<span>Ler os termos de uso</span></button>
           <span class="errmsg" id="e-terms" role="alert" hidden style="display:block;margin-top:.4rem"></span></div>
         <button class="btn xl btn-primary" type="submit">${ic('check_circle', { fill: true, size: 2 })}<span>CRIAR CONTA</span></button>
       </form>
@@ -125,7 +126,7 @@
   VD.on('showTerms', () => {
     VD.ui.openOverlay(`<div class="row between"><h3 class="t-h2">Termos de uso</h3><button class="iconbtn" data-close aria-label="Fechar">${ic('close')}</button></div>
       <div class="stack"><p class="t-md">Este é um aplicativo de <b>demonstração</b>. Os dados que você digita ficam apenas neste aparelho, no navegador, e não são enviados a nenhum servidor.</p>
-      <p class="t-md">O VivaDia ajuda a lembrar de remédios e atividades, mas <b>não substitui</b> a orientação do seu médico. Em emergência, ligue 192 (SAMU).</p></div>
+      <p class="t-md">O VivaDia ajuda a lembrar de medicamentos e atividades, mas <b>não substitui</b> a orientação do seu médico. Em emergência, ligue 192 (SAMU).</p></div>
       <button class="btn lg btn-primary" data-close>${ic('check')}<span>Entendi</span></button>`);
   });
 

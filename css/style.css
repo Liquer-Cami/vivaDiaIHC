@@ -993,6 +993,20 @@ main.no-nav {
   border: 1.5px solid #8fd8e1;
 }
 
+.task-sheet-head {
+  flex-wrap: wrap;
+  row-gap: .5rem;
+}
+
+.task-sheet-head>.row {
+  min-width: 0;
+  flex: 1 1 12rem;
+}
+
+.task-sheet-head>.badge {
+  margin-left: 0;
+}
+
 .pill-info {
   display: inline-flex;
   align-items: center;
@@ -1328,6 +1342,52 @@ a.btn {
 
 .day.sel small {
   color: var(--teal-fixed);
+}
+
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: .35rem;
+  padding: .5rem var(--margin) .75rem;
+  text-align: center;
+}
+
+.month-day {
+  min-height: 3.5rem;
+  border: 1.5px solid var(--pebble);
+  border-radius: .75rem;
+  background: var(--white);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .2rem;
+}
+
+.month-day.outside {
+  opacity: .45;
+}
+
+.month-day.sel {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #fff;
+}
+
+.month-day .dot {
+  width: .45rem;
+  height: .45rem;
+  border-radius: 50%;
+  background: var(--pebble);
+}
+
+.month-day .dot.ok {
+  background: var(--green);
+}
+
+.month-day .dot.part {
+  background: var(--accent);
 }
 
 .filters {
@@ -2239,24 +2299,23 @@ details.faq .answer {
     align-items: start;
   }
 
-  .dash>.d-status,
   .dash>.d-prog {
     grid-column: 1 / -1;
   }
 
   .dash>.d-next {
     grid-column: 1;
-    grid-row: 3;
+    grid-row: 2;
   }
 
   .dash>.d-list {
     grid-column: 1;
-    grid-row: 4;
+    grid-row: 3;
   }
 
   .dash>.d-areas {
     grid-column: 2;
-    grid-row: 3 / span 2;
+    grid-row: 2 / span 2;
     position: sticky;
     top: 6rem;
   }
@@ -2410,11 +2469,18 @@ h4,
     margin-left: calc(3rem + var(--gap));
   }
 
+  .task-sheet-head>.badge {
+    flex: 0 1 calc(100% - 3rem - var(--gap));
+    width: calc(100% - 3rem - var(--gap));
+    box-sizing: border-box;
+    margin-left: calc(3rem + var(--gap));
+  }
+
   .card-head .t-small {
     overflow-wrap: anywhere;
   }
 
-  /* histórico do detalhe do remédio */
+  /* histórico do detalhe do medicamento */
   .hist {
     flex-wrap: wrap;
     row-gap: .5rem;
@@ -2727,4 +2793,44 @@ h4,
   .nav .lbl-d {
     display: inline;
   }
+}
+
+/* ==========================================================================
+   AJUSTES DA REVISÃO COM AS 10 HEURÍSTICAS DE NIELSEN
+   ========================================================================== */
+
+/* Aviso (toast) com botão de ação, ex.: "Desfazer" — H3 controle e liberdade */
+.toast-act {
+  flex-shrink: 0;
+  min-height: 3rem;
+  padding: 0 1rem;
+  border-radius: 1rem;
+  border: 2px solid currentColor;
+  background: rgba(255, 255, 255, .16);
+  color: inherit;
+  font-weight: 700;
+  font-size: 1.0625rem;
+}
+
+.toast-act:active {
+  background: rgba(255, 255, 255, .32);
+}
+
+/* Entrada dos Ajustes sempre reconhecível: o círculo com a inicial ganha uma engrenagem — H6 */
+.avatar {
+  position: relative;
+}
+
+.avatar .gear {
+  position: absolute;
+  right: -.45rem;
+  bottom: -.45rem;
+  width: 1.35rem;
+  height: 1.35rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--teal);
+  box-shadow: var(--shadow-card);
 }

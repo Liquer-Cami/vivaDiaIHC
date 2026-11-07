@@ -13,14 +13,13 @@
     const msg = done === 0 ? 'Vamos começar o dia com calma. Uma coisa de cada vez.'
       : done === total ? 'Parabéns! Você completou tudo por hoje. Descanse tranquilo.'
       : 'Muito bem! Você está cuidando bem do seu dia, sem pressa.';
-    const online = navigator.onLine;
 
     const nextCard = next ? `
       <section class="px" aria-labelledby="prox">
         <div class="card accent-top stack">
           <div class="row between">
             <span class="t-small upper c-teal" id="prox" style="font-weight:700">Próxima atividade</span>
-            ${VD.ui.statusBadge(next.status, next.status === 'snoozed' ? { label: 'Adiada' } : {})}
+            ${VD.ui.taskBadge(next)}
           </div>
           <div class="row wrap" style="align-items:baseline">
             <span class="t-time">${next.time}</span>
@@ -29,8 +28,8 @@
           <h2 class="t-h2">${esc(next.title)}</h2>
           <p class="t-lg muted note">${esc(next.desc || '')}</p>
           <div class="grid2">
-            <button class="btn lg btn-success" data-act="nextDone" data-key="${next.key}">${ic('check_circle', { fill: true })}<span>FEITO</span></button>
-            <button class="btn lg btn-outline" data-act="nextSnooze" data-key="${next.key}">${ic('update')}<span>ADIAR 10 min</span></button>
+            <button class="btn lg btn-success" data-act="nextDone" data-key="${next.key}">${ic('check_circle', { fill: true })}<span>${next.medId ? 'JÁ TOMEI' : 'FEITO'}</span></button>
+            <button class="btn lg btn-outline" data-act="nextSnooze" data-key="${next.key}">${ic('update')}<span>ADIAR ${VD.SNOOZE_MIN} min</span></button>
           </div>
           <button class="btn-link" style="align-self:center" data-act="openTask" data-key="${next.key}">Ver detalhes</button>
         </div>
@@ -49,7 +48,7 @@
           <div class="txt"><p class="t-bold">${esc(t.title)}</p>
           <p class="t-md ${isNext ? 'c-accent' : 'muted'}" ${isNext ? 'style="font-weight:700"' : ''}>${t.time} • ${isNext ? 'Próxima' : esc(cat.label)}</p></div>
         </div>
-        ${VD.ui.statusBadge(t.status, { label: t.status === 'done' ? 'FEITA' : t.status === 'snoozed' ? 'ADIADA' : 'PENDENTE' })}
+        ${VD.ui.taskBadge(t)}
       </button>`;
     }).join('');
 
@@ -63,8 +62,6 @@
       title: 'Hoje',
       html: `
       <div class="page dash" style="padding-left:0;padding-right:0">
-        <div class="px d-status" style="padding:0 var(--margin)">
-        </div>
         <div class="stack d-prog" style="padding:0 var(--margin)">
           <h1 class="t-h1">${VD.capital(title)}</h1>
           <div class="card flat">
@@ -81,13 +78,14 @@
         <section class="stack d-areas" style="padding:0 var(--margin)" aria-labelledby="areas">
           <div class="section-head"><h2 class="t-h3" id="areas">Área de Atividades</h2></div>
           <div class="grid2">${areas}</div>
+          <button class="btn btn-soft" data-act="prefs">${ic('settings')}<span>Ajustes: tamanho da letra e avisos</span></button>
         </section>
       </div>`,
     };
   };
 
   VD.on('nextDone', (el) => VD.act.done(el.dataset.key));
-  VD.on('nextSnooze', (el) => VD.act.snooze(el.dataset.key, 10));
+  VD.on('nextSnooze', (el) => VD.act.snooze(el.dataset.key, VD.SNOOZE_MIN));
   VD.on('area', (el) => {
     const { id, route } = el.dataset;
     if (route) return VD.go(route);

@@ -18,7 +18,8 @@
           ${c.wa ? `<a class="btn lg btn-wa" href="https://wa.me/${c.wa}" target="_blank" rel="noopener">${ic('chat', { size: 1.75 })}<span>Conversar no WhatsApp</span></a>` : ''}
         </div></article>`;
     };
-    const faq = VD.FAQ.map((f) => `<details class="faq"><summary><div class="iconchip sm round" style="background:var(--container-high);color:var(--teal)">${ic(f.icon)}</div><span>${f.q}</span>${ic('expand_more', { cls: 'chev' })}</summary>
+    const cgFirst = cg.name.split(' ')[0];
+    const faq = VD.FAQ.map((f) => ({ ...f, a: f.a.replace(/\{cg\}/g, esc(cgFirst)) })).map((f) => `<details class="faq"><summary><div class="iconchip sm round" style="background:var(--container-high);color:var(--teal)">${ic(f.icon)}</div><span>${f.q}</span>${ic('expand_more', { cls: 'chev' })}</summary>
       <div class="answer"><p class="t-md">${f.a}</p>${f.phone ? `<a class="btn btn-softteal" href="tel:${f.phone.tel}">${ic('headset_mic')}<span>${f.phone.label}</span></a>` : ''}</div></details>`).join('');
 
     return {
@@ -32,7 +33,7 @@
         </section>
         <div class="stack-xs"><div class="row" style="gap:.5rem">${ic('health_and_safety', { fill: true, size: 2, cls: 'c-primary' })}<h1 class="t-h1 c-primary">Central de Ajuda e Apoio</h1></div>
           <p class="t-lg muted">Precisa de auxílio ou companhia? Escolha uma opção com apenas um toque.</p></div>
-           <button class="btn lg btn-accent" data-act="askHelp">${ic('notifications_active', { fill: true, size: 1.75 })}<span>Avisar ${esc(cg.name.split(' ')[0])} que preciso de ajuda</span></button>
+           <button class="btn lg btn-accent" data-act="askHelp">${ic('notifications_active', { fill: true, size: 1.75 })}<span>Avisar ${esc(cgFirst)} que preciso de ajuda</span></button>
         <section class="sos" aria-labelledby="sos-t">
           <div class="row"><div class="iconchip round lg">${ic('emergency_home', { fill: true, size: 2 })}</div>
             <div><h2 class="t-h3" id="sos-t" style="color:var(--error-text)">Emergência Médica</h2><p class="t-md" style="color:var(--error-text);font-weight:600">Atendimento rápido 24 horas</p></div></div>
@@ -46,17 +47,23 @@
     };
   };
 
-  VD.on('samu', () => { VD.vibrate([200, 100, 200]); S.notifyFamily('Ligou para o SAMU (192)'); });
-  VD.on('callLog', (el) => { S.notifyFamily(`Ligou para ${el.dataset.name}`); });
+  // Ligações de emergência/contato nunca são bloqueadas nem atrasadas: o aviso ao familiar é só um extra (respeita a opção em Ajustes)
+  const tellFamily = (reason) => {
+    if (VD.auth.isGuest() || !S.settings.notifyFamily) return;
+    S.notifyFamily(reason);
+    VD.ui.toast('Ligando...', { icon: 'call', sub: `${S.caregiver.name.split(' ')[0]} será avisado(a) desta ligação.`, ms: 3500 });
+  };
+  VD.on('samu', () => { VD.vibrate([200, 100, 200]); tellFamily('Ligou para o SAMU (192)'); });
+  VD.on('callLog', (el) => { tellFamily(`Ligou para ${el.dataset.name}`); });
   VD.on('askHelp', async () => {
-    const cg = S.caregiver;
-    const ok = await VD.ui.confirmDialog({ title: 'Pedir ajuda', text: `Avisar ${cg.name.split(' ')[0]} agora?`, sub: 'Ela receberá uma mensagem dizendo que você precisa de apoio.', yes: 'Sim, avisar', icon: 'notifications_active' });
-    if (ok) { S.notifyFamily('Pedido de ajuda'); VD.ui.toast('Mensagem enviada!', { kind: 'ok', icon: 'mark_chat_read', sub: `${cg.name} foi avisada.` }); }
+    const cg = S.caregiver, first = cg.name.split(' ')[0];
+    const ok = await VD.ui.confirmDialog({ title: 'Pedir ajuda', text: `Avisar ${first} agora?`, sub: `${first} receberá uma mensagem dizendo que você precisa de apoio.`, yes: 'Sim, avisar', no: 'Não avisar', icon: 'notifications_active' });
+    if (ok) { S.notifyFamily('Pedido de ajuda'); VD.ui.toast('Mensagem enviada!', { kind: 'ok', icon: 'mark_chat_read', sub: `${first} recebeu o seu pedido de ajuda.` }); }
   });
   VD.on('audio', () => {
     const label = document.getElementById('audioLabel');
     if (!VD.ui.speech.supported) { VD.ui.toast('Seu aparelho não tem leitura em voz', { icon: 'volume_off', kind: 'warn' }); return; }
     if (speaking) { VD.ui.speech.stop(); speaking = false; if (label) label.textContent = 'Ouvir novamente por voz'; return; }
-    VD.ui.speech.speak(VD.AUDIO_GUIDE, { onstart() { speaking = true; if (label) label.textContent = 'Parar áudio'; }, onend() { speaking = false; const l = document.getElementById('audioLabel'); if (l) l.textContent = 'Ouvir novamente por voz'; } });
+    VD.ui.speech.speak(VD.audioGuide(S.caregiver.name.split(' ')[0]), { onstart() { speaking = true; if (label) label.textContent = 'Parar áudio'; }, onend() { speaking = false; const l = document.getElementById('audioLabel'); if (l) l.textContent = 'Ouvir novamente por voz'; } });
   });
 })(window.VD);

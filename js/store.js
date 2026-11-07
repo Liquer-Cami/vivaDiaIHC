@@ -45,6 +45,7 @@
       settings: { ...DEFAULT_SETTINGS },
       activityLog: [],
       familyLog: [],
+      deletedTemplates: [],
     };
   }
 
@@ -55,8 +56,14 @@
       if (raw) {
         const s = JSON.parse(raw);
         if (s && s.v === 1) {
-          // contas salvas sem a tarefa do jogo de memória: devolve a tarefa
-          if (!(s.templates || []).some((t) => t.id === 't6')) { const t6 = VD.templatesSeed(VD.today()).find((t) => t.id === 't6'); if (t6) s.templates.push(t6); }
+          // contas antigas sem o registro de exclusões: devolve a tarefa do jogo de memória
+          if (!(s.templates || []).some((t) => t.id === 't6') && !(s.deletedTemplates || []).includes('t6')) {
+            const t6 = VD.templatesSeed(VD.today()).find((t) => t.id === 't6');
+            if (t6) s.templates.push(t6);
+          }
+          s.deletedTemplates = s.deletedTemplates || [];
+          // contas antigas: títulos que ficaram em minúscula ("medicamento da manhã") passam a começar com maiúscula
+          s.templates.forEach((t) => { if (/^medicamento\b/.test(t.title || '')) t.title = VD.capital(t.title); });
           return s;
         }
       }
@@ -145,6 +152,7 @@
     addTemplate(t) { state.templates.push({ id: 't' + Date.now() + Math.floor(Math.random() * 99), custom: true, ...t }); commit(); },
     removeTemplate(id) {
       state.templates = state.templates.filter((t) => t.id !== id);
+      if (!state.deletedTemplates.includes(id)) state.deletedTemplates.push(id);
       Object.keys(state.status).forEach((k) => { if (k.startsWith(id + '@')) delete state.status[k]; });
       commit();
     },

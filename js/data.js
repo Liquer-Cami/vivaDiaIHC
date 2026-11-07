@@ -31,9 +31,9 @@ window.VD = window.VD || {};
    */
   VD.templatesSeed = (todayIso) => [
     { id: 't1', time: '07:30', category: 'food', title: 'Café da manhã', desc: 'Café com leite, 2 torradas integrais e mamão.' },
-    { id: 't2', time: '08:00', category: 'med', medId: 'm1', title: 'Remédio da manhã', desc: 'Tomar 1 comprimido com água após o café.' },
+    { id: 't2', time: '08:00', category: 'med', medId: 'm1', title: 'Medicamento da manhã', desc: 'Tomar 1 comprimido com água após o café.' },
     { id: 't3', time: '12:30', category: 'food', title: 'Almoço', desc: 'Arroz, feijão, frango grelhado e salada de legumes cozidos.' },
-    { id: 't4', time: '14:00', category: 'med', medId: 'm2', title: 'Remédio de pressão', desc: 'Tomar 1 comprimido com meio copo de água após o almoço.' },
+    { id: 't4', time: '14:00', category: 'med', medId: 'm2', title: 'Medicamento de pressão', desc: 'Tomar 1 comprimido com meio copo de água após o almoço.' },
     { id: 't5', time: '16:00', category: 'exercise', title: 'Caminhada guiada', desc: '20 minutos no jardim ou calçada plana, com tênis confortável.' },
     { id: 't6', time: '17:00', category: 'mind', activityId: 'memoria', title: 'Jogo de memória', desc: 'Jogo de 5 minutos no aplicativo. Sem pressa!' },
     { id: 't7', time: '19:00', category: 'med', medId: 'm3', title: 'Vitamina D', desc: 'Tomar 1 cápsula antes do jantar.' },
@@ -42,12 +42,19 @@ window.VD = window.VD || {};
     { id: 't10', time: '15:00', category: 'consulta', date: VD.addDays(todayIso, 1), title: 'Dr. Eduardo (Cardiologista)', desc: 'Clínica São Marcos - Sala 204.', note: 'Levar os últimos exames de sangue impressos.' },
   ];
 
+  /** Perguntas frequentes. {cg} vira o primeiro nome do familiar escolhido em Ajustes (não fica preso a uma pessoa). */
   VD.FAQ = [
-    { icon: 'format_size', q: 'Como aumentar o tamanho da letra?', a: 'No topo direito de qualquer tela, procure o botão <b>A- A+</b>. Toque no <b>A+</b> para as letras aumentarem na hora. Também dá para escolher em <b>Preferências</b> (toque na sua foto no topo).' },
-    { icon: 'medication', q: 'Como avisar que já tomei meu remédio?', a: 'Vá até a tela <b>Hoje</b> no menu de baixo. No cartão do remédio, aperte o grande botão verde <b>FEITO</b>. Sua filha Carla recebe a confirmação!' },
+    { icon: 'format_size', q: 'Como aumentar o tamanho da letra?', a: 'No topo direito de qualquer tela, toque no botão <b>A+</b> e as letras aumentam na hora. Também dá para escolher em <b>Ajustes</b>: toque no círculo com a sua inicial (e uma engrenagem) no topo, ou no botão <b>Ajustes</b> da tela Hoje.' },
+    { icon: 'medication', q: 'Como avisar que já tomei meu medicamento?', a: 'Abra a aba <b>Medicamentos</b> no menu de baixo e toque no grande botão <b>JÁ TOMEI</b>. Se a opção estiver ligada em Ajustes, {cg} recebe a confirmação.' },
+    { icon: 'add_circle', q: 'Como cadastrar um medicamento novo?', a: 'Na aba <b>Medicamentos</b>, toque em <b>Adicionar Medicamento</b>. Só o nome e um horário são obrigatórios. Os lembretes diários são criados sozinhos.' },
+    { icon: 'event', q: 'Como criar um lembrete (consulta, água, caminhada)?', a: 'Na aba <b>Agenda</b>, toque em <b>Adicionar Novo Lembrete</b>, escolha o dia, a hora e o tipo. Depois toque em <b>Salvar lembrete</b>.' },
+    { icon: 'undo', q: 'Marquei sem querer. Como desfazer?', a: 'Logo depois de marcar, toque em <b>Desfazer</b> no aviso que aparece na tela. Se o aviso já sumiu, toque no item para abrir os detalhes e use o botão <b>Desfazer</b>.' },
+    { icon: 'delete', q: 'Como remover um lembrete ou um medicamento?', a: 'Toque no item para abrir os detalhes e use o botão vermelho <b>Remover</b>. O app sempre pergunta antes de apagar.' },
+    { icon: 'warning', q: 'Esqueci se tomei ou tenho dúvida na dose. O que faço?', a: 'Não tome outra dose por conta própria. Ligue para {cg} ou para o seu médico. Se estiver passando mal, ligue agora para o SAMU.', phone: { tel: '192', label: 'Ligar SAMU (192)' } },
   ];
 
-  VD.AUDIO_GUIDE = 'Você está na Central de Ajuda VivaDia. No topo da tela há um botão vermelho grande para ligar direto para o SAMU, número 192. Logo abaixo estão os telefones da sua filha Carla, do seu cardiologista Doutor Eduardo e da sua vizinha Dona Maria. Toque no botão para ligar.';
+  /** Texto lido em voz alta na tela de Ajuda — segue a ordem real da tela e usa os contatos cadastrados */
+  VD.audioGuide = (cg) => `Você está na Central de Ajuda do VivaDia. Primeiro, há um botão para avisar ${cg} de que você precisa de ajuda. Logo abaixo está o botão vermelho grande para ligar direto para o SAMU, número 192. Depois estão os seus contatos de confiança: ${VD.CONTACTS.map((c) => `${c.name}, ${c.role.replace('•', 'e')}`).join('; ')}. Em cada um, toque em Ligar Agora para telefonar.`;
 
   /* ---------- Atividades mentais ---------- */
   VD.ACTIVITIES = [

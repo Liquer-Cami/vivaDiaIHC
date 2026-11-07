@@ -1,6 +1,6 @@
 /* VivaDia — roteador por hash, cabeçalho, menu e vigia de lembretes */
 (function (VD) {
-  const { ic, esc, $ } = VD;
+  const { ic, esc, $, $$ } = VD;
   const S = VD.store;
   VD.pages = VD.pages || {};
   let current = null; // {cleanup}
@@ -9,7 +9,10 @@
   const LOGO = `<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#0F5C63"/><circle cx="32" cy="34" r="11" fill="#FE843B"/><g stroke="#FAF8F3" stroke-width="4" stroke-linecap="round"><path d="M32 10v7M12 34h7M45 34h7M18 20l5 5M46 20l-5 5"/></g></svg>`;
 
   VD.go = (path) => { if (location.hash === '#' + path) render(); else location.hash = path; };
-  VD.back = () => { if (history.length > 1) history.back(); else VD.go('/hoje'); };
+  VD.back = () => {
+    if (match().name === 'jogo') return VD.go('/mental');
+    if (history.length > 1) history.back(); else VD.go('/hoje');
+  };
 
   /* ---------- rotas ---------- */
   const routes = [
@@ -43,7 +46,7 @@
           <button data-act="fontMinus" aria-label="Diminuir letras" ${fs === 0 ? 'disabled' : ''}>A-</button>
           <button data-act="fontPlus" aria-label="Aumentar letras" ${fs === S.FONT_STEPS.length - 1 ? 'disabled' : ''}>A+</button>
         </div>
-        <button class="avatar" data-act="prefs" aria-label="Preferências e avisos">${VD.initial(VD.USER.name)}</button>
+        <button class="avatar" data-act="prefs" aria-label="Ajustes: avisos e tamanho das letras" title="Ajustes">${VD.initial(VD.USER.name)}${ic('settings', { fill: true, cls: 'gear', size: 0.95 })}</button>
       </div></div>`;
   }
 
@@ -73,6 +76,8 @@
     if (authed && authed.guest && GUEST_BLOCKED.includes(route.name)) { VD.auth.blocked(); location.replace('#/hoje'); return; }
     const scroll = window.scrollY;
     const sameRoute = current && current.path === match().path;
+    const ae = document.activeElement;
+    const focusSig = sameRoute && ae && ae.closest && ae.closest('#view') && ae.dataset && ae.dataset.act ? { ...ae.dataset } : null;
     if (current && current.cleanup) { try { current.cleanup(); } catch (e) {} }
     const { name, params, path } = match();
     const page = VD.pages[name](...params) || {};
@@ -91,6 +96,13 @@
     view.innerHTML = page.html;
     if (page.mount) page.mount(view);
     window.scrollTo(0, sameRoute ? scroll : 0);
+    // foco: tela nova → título da tela (leitor de tela anuncia onde a pessoa está); mesma tela → volta ao botão que estava em foco
+    if (!sameRoute) {
+      const h = view.querySelector('h1'); if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true }); }
+    } else if (focusSig) {
+      const again = $$('#view [data-act]').find((x) => Object.keys(focusSig).every((k) => x.dataset[k] === focusSig[k]));
+      if (again) again.focus({ preventScroll: true });
+    }
     document.title = `${page.title || 'VivaDia'} — VivaDia`;
   }
   VD.render = render;
@@ -114,8 +126,13 @@
       const id = `${t.key}|${t.time}`;
       if (diff >= 0 && diff <= 2 && !alerted.has(id)) {
         alerted.add(id);
-        if (S.settings.bigAlert) VD.go(`/lembrete/${t.key}`);
-        else { VD.ui.toast(`Hora de: ${t.title}`, { icon: 'notifications_active', kind: 'warn', ms: 6000 }); if (S.settings.loudSound) VD.ui.beep(3); }
+        // não derruba o que a pessoa está fazendo (formulário aberto, jogo, janela de confirmação): avisa com mensagem e deixa abrir quando puder
+        const busy = document.querySelector('.overlay') || ['novoRemedio', 'jogo'].includes(match().name);
+        if (S.settings.bigAlert && !busy) VD.go(`/lembrete/${t.key}`);
+        else {
+          VD.ui.toast(`Hora de: ${t.title}`, { icon: 'notifications_active', kind: 'warn', ms: 9000, action: busy ? { label: 'Abrir aviso', onClick: () => VD.go(`/lembrete/${t.key}`) } : null });
+          if (S.settings.loudSound) VD.ui.beep(3);
+        }
       }
     });
   }
@@ -127,8 +144,6 @@
     watchReminders();
     setInterval(watchReminders, 15000);
     setInterval(() => { if (['hoje', 'agenda'].includes(current && current.name) && !document.querySelector('.overlay')) render(); }, 60000);
-    window.addEventListener('online', () => current && current.name === 'hoje' && render());
-    window.addEventListener('offline', () => current && current.name === 'hoje' && render());
   }
   document.addEventListener('DOMContentLoaded', boot);
 })(window.VD);
