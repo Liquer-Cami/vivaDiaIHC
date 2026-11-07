@@ -43,13 +43,14 @@
     const rows = tasks.map((t) => {
       const cat = VD.CATEGORIES[t.category];
       const isNext = next && next.key === t.key;
-      return `<button class="task-row${isNext ? ' current' : ''}" data-act="openTask" data-key="${t.key}">
+      return `<div class="task-row${isNext ? ' current' : ''}">
         <div class="grow">${VD.ui.catChip(t.category)}
           <div class="txt"><p class="t-bold">${esc(t.title)}</p>
           <p class="t-md ${isNext ? 'c-accent' : 'muted'}" ${isNext ? 'style="font-weight:700"' : ''}>${t.time} • ${isNext ? 'Próxima' : esc(cat.label)}</p></div>
         </div>
         ${VD.ui.taskBadge(t)}
-      </button>`;
+        <button class="btn btn-soft task-details" data-act="openTask" data-key="${t.key}" aria-label="Ver detalhes de ${esc(t.title)}">${ic('info')}<span style="white-space: normal; line-height:1.2">Detalhes</span></button>
+      </div>`;
     }).join('');
 
     const areas = [

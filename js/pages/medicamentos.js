@@ -11,6 +11,11 @@
     const pct = meds.length ? Math.round((taken / meds.length) * 100) : 0;
     const current = meds.find((t) => t.status !== 'done');
 
+    // Botão "Detalhes": MESMO componente da Agenda (ícone, texto, estilo e posição) — consistência entre telas
+    const BTN_HALF = 'flex:1; min-width:0; height:auto; padding-block:0.75rem;';
+    const BTN_TXT = 'white-space: normal; line-height:1.2';
+    const detailsBtn = (t) => `<button class="btn btn-soft" style="${BTN_HALF}" data-act="openTask" data-key="${t.key}" aria-label="Ver detalhes de ${esc(t.title)}">${ic('info')}<span style="${BTN_TXT}">Detalhes</span></button>`;
+
     const card = (t) => {
       const m = S.med(t.medId) || {};
       const isCur = current && current.key === t.key;
@@ -23,17 +28,26 @@
           </div>
           ${VD.ui.taskBadge(t, { time: true })}
         </div>
-        <button class="stack-xs" style="text-align:left" data-act="openTask" data-key="${t.key}">
+        <div class="stack-xs">
           <h2 class="t-h3">${esc(t.title)}</h2>
           <p class="t-md muted">${esc(m.name || '')} • ${esc(m.dose || '')}</p>
           <p class="t-md muted row" style="gap:.4rem">${ic('info', { size: 1.25, cls: 'c-accent' })}<span>${esc(t.desc || '')}</span></p>
-        </button>
+        </div>
         ${doneCard
-          ? `<button class="btn btn-softteal" data-act="reconfirm" data-key="${t.key}">${ic('check')}<span>Tomado — marcar de novo?</span></button>`
+          ? `<div class="row wrap med-actions" style="gap:.6rem">
+               <button class="btn btn-softteal" style="${BTN_HALF}" data-act="reconfirm" data-key="${t.key}">${ic('check')}<span style="${BTN_TXT}">Tomado — marcar de novo?</span></button>
+               ${detailsBtn(t)}
+             </div>`
           : isCur
             ? `<button class="btn xl btn-primary" data-act="medTake" data-key="${t.key}">${ic('check_circle', { fill: true, size: 2 })}<span>JÁ TOMEI</span></button>
-               <button class="btn btn-soft" data-act="medSnooze" data-key="${t.key}">${ic('snooze')}<span>Adiar ${VD.SNOOZE_MIN} min</span></button>`
-            : `<button class="btn lg btn-softteal" data-act="medTake" data-key="${t.key}">${ic('check')}<span>Já tomei</span></button>`}
+               <div class="row wrap med-actions" style="gap:.6rem">
+                 <button class="btn btn-soft" style="${BTN_HALF}" data-act="medSnooze" data-key="${t.key}">${ic('snooze')}<span style="${BTN_TXT}">Adiar ${VD.SNOOZE_MIN} min</span></button>
+                 ${detailsBtn(t)}
+               </div>`
+            : `<div class="row wrap med-actions" style="gap:.6rem">
+                 <button class="btn btn-softteal" style="${BTN_HALF}" data-act="medTake" data-key="${t.key}">${ic('check')}<span style="${BTN_TXT}">Já tomei</span></button>
+                 ${detailsBtn(t)}
+               </div>`}
       </article>`;
     };
 

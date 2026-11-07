@@ -1243,6 +1243,12 @@ a.btn {
   min-width: 0;
 }
 
+.task-details {
+  flex-shrink: 0;
+  height: auto;
+  padding-block: .75rem;
+}
+
 /* ---------- Áreas ---------- */
 .area {
   display: flex;
@@ -2430,6 +2436,11 @@ h4,
     padding: 1rem;
   }
 
+  .task-details {
+    flex: 1 1 100%;
+    text-align: right;
+  }
+
   .task-row>.grow {
     flex: 1 1 100%;
     align-items: flex-start;
@@ -2455,6 +2466,11 @@ h4,
   }
 
   /* ---------- MEDICAMENTOS ---------- */
+  .med-actions>.btn:last-child {
+    flex: 0 0 100% !important;
+    width: 100%;
+  }
+
   .card-head {
     flex-wrap: wrap;
     row-gap: .6rem;
