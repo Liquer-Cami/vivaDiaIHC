@@ -127,7 +127,10 @@
         if (s) box.scrollLeft = s.offsetLeft - box.clientWidth / 2 + s.clientWidth / 2;
         if (VD.ui_openReminderOnAgenda) {
           VD.ui_openReminderOnAgenda = false;
-          setTimeout(() => root.querySelector('[data-act="addReminder"]')?.click(), 0);
+          setTimeout(() => {
+            const addButton = root.querySelector('[data-act="addReminder"]');
+            if (addButton) addButton.click();
+          }, 0);
         }
       },
     };
