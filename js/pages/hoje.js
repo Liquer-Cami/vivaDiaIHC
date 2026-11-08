@@ -64,6 +64,7 @@
       html: `
       <div class="page dash" style="padding-left:0;padding-right:0">
         <div class="stack d-prog" style="padding:0 var(--margin)">
+          <button class="btn xl btn-accent" data-act="quickAddReminder">${ic('add_circle', { size: 2 })}<span>Adicionar Novo lembrete</span></button>
           <h1 class="t-h1">${VD.capital(title)}</h1>
           <div class="card flat">
             <div class="row between"><span class="t-bold">Progresso do Dia</span><span class="t-label c-teal">${done} de ${total} feitas</span></div>
@@ -87,6 +88,12 @@
 
   VD.on('nextDone', (el) => VD.act.done(el.dataset.key));
   VD.on('nextSnooze', (el) => VD.act.snooze(el.dataset.key, VD.SNOOZE_MIN));
+  VD.on('quickAddReminder', () => {
+    VD.ui_agendaDate = VD.today();
+    VD.ui_agendaFilter = 'all';
+    VD.ui_openReminderOnAgenda = true;
+    VD.go('/agenda');
+  });
   VD.on('area', (el) => {
     const { id, route } = el.dataset;
     if (route) return VD.go(route);

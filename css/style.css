@@ -1234,6 +1234,8 @@ a.btn {
 }
 
 .task-row .grow {
+  flex: 1 1 auto;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: var(--gap);
@@ -1245,6 +1247,7 @@ a.btn {
 
 .task-details {
   flex-shrink: 0;
+  width: auto;
   height: auto;
   padding-block: .75rem;
 }
@@ -2438,6 +2441,7 @@ h4,
 
   .task-details {
     flex: 1 1 100%;
+    width: 100%;
     text-align: right;
   }
 

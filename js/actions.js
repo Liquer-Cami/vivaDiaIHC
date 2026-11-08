@@ -7,7 +7,7 @@
 
   /** Registra um handler para elementos com data-act="nome" */
   VD.on = (name, fn) => { handlers[name] = fn; };
-  const WRITE = new Set(['nextDone', 'nextSnooze', 'medTake', 'medSnooze', 'reconfirm', 'goNewMed', 'detDone', 'detSnooze', 'detUndo', 'delMed', 'agMark', 'addReminder', 'toggle', 'resetDemo', 'remDone', 'remSnooze', 'remFamily', 'remDelete', 'askHelp', 'swapCaregiver', 'deleteAccount']);
+  const WRITE = new Set(['nextDone', 'nextSnooze', 'medTake', 'medSnooze', 'reconfirm', 'goNewMed', 'detDone', 'detSnooze', 'detUndo', 'delMed', 'agMark', 'addReminder', 'quickAddReminder', 'toggle', 'resetDemo', 'remDone', 'remSnooze', 'remFamily', 'remDelete', 'askHelp', 'swapCaregiver', 'deleteAccount']);
   WRITE.add('playActivity'); // visitante só visualiza: não começa jogos
   document.addEventListener('click', (e) => {
     const el = e.target.closest('[data-act]');

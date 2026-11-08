@@ -6,6 +6,7 @@
   VD.ui_agendaDate = null;
   VD.ui_agendaMonth = false;
   VD.ui_agendaCalendarMonth = null;
+  VD.ui_openReminderOnAgenda = false;
 
   const FILTERS = [['all', 'checklist', 'Todos'], ['med', 'pill', 'Medicamentos'], ['food', 'restaurant', 'Alimentação'], ['exercise', 'directions_walk', 'Exercícios'], ['mind', 'psychology', 'Mente']];
   const PERIODS = [['morning', 'Manhã', 'light_mode', 'var(--accent-soft)'], ['afternoon', 'Tarde', 'wb_twilight', 'var(--accent-container)'], ['night', 'Noite', 'dark_mode', 'var(--primary-fixed-dim, #90d1d9)']];
@@ -124,6 +125,10 @@
         const box = $('#days', root);
         const s = box && box.querySelector('.sel');
         if (s) box.scrollLeft = s.offsetLeft - box.clientWidth / 2 + s.clientWidth / 2;
+        if (VD.ui_openReminderOnAgenda) {
+          VD.ui_openReminderOnAgenda = false;
+          setTimeout(() => root.querySelector('[data-act="addReminder"]')?.click(), 0);
+        }
       },
     };
   };

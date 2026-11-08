@@ -16,7 +16,11 @@
 
   function ensureDemo() {
     const l = users();
-    if (!l.some((u) => u.id === DEMO.id)) { l.push({ id: DEMO.id, name: DEMO.name, email: DEMO.email, phone: DEMO.phone, pass: hash(DEMO.email, DEMO.password), createdAt: Date.now() }); saveUsers(l); }
+    const index = l.findIndex((u) => u.id === DEMO.id);
+    const demoUser = { id: DEMO.id, name: DEMO.name, email: DEMO.email, phone: DEMO.phone, pass: hash(DEMO.email, DEMO.password), createdAt: index >= 0 ? l[index].createdAt : Date.now() };
+    if (index < 0) l.push(demoUser);
+    else l[index] = { ...l[index], ...demoUser };
+    saveUsers(l);
   }
 
   function session() {
