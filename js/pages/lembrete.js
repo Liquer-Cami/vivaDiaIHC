@@ -59,7 +59,7 @@
   VD.on('remSnooze', (el) => { VD.act.snooze(el.dataset.key, VD.SNOOZE_MIN); leave(); });
   VD.on('remFamily', () => {
     const cg = S.caregiver; S.notifyFamily('Pediu ajuda no lembrete');
-    VD.ui.toast('Mensagem enviada!', { icon: 'mark_chat_read', sub: `${cg.name.split(' ')[0]} recebeu o seu pedido de ajuda.` });
+    VD.ui.toast('Mensagem enviada!', { icon: 'mark_chat_read', sub: `${cg ? cg.name.split(' ')[0] : 'Sua família'} recebeu o seu pedido de ajuda.` });
   });
   VD.on('remClose', () => VD.go('/hoje'));
   VD.on('remCloseTest', () => VD.go('/preferencias'));

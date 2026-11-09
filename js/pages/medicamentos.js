@@ -129,7 +129,7 @@
               ? `<button class="btn xl btn-success" data-act="detDone" data-key="${t.key}">${ic('check_circle', { fill: true, size: 2 })}<span>JÁ TOMEI</span></button>
                  <button class="btn lg btn-peach" data-act="detSnooze" data-key="${t.key}">${ic('alarm', { size: 1.75 })}<span>Adiar ${VD.SNOOZE_MIN} min</span></button>`
               : `<p class="t-md muted">Você poderá marcar este medicamento no dia dele.</p>`}
-          <a class="btn lg btn-soft" href="tel:${cg.tel}">${ic('call', { cls: 'c-teal', size: 1.75 })}<span>Perguntar para Cuidador (${esc(cg.name.split(' ')[0])})</span></a>
+          ${cg ? `<a class="btn lg btn-soft" href="tel:${(cg.phone || '').replace(/\D/g, '')}">${ic('call', { cls: 'c-teal', size: 1.75 })}<span>Perguntar para Cuidador (${esc(cg.name.split(' ')[0])})</span></a>` : ''}
         </div>
 
         <div class="card stack">

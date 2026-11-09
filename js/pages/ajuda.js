@@ -6,21 +6,43 @@
 
   VD.pages.ajuda = () => {
     const cg = S.caregiver;
+    const contacts = S.extraContacts || [];
     const contact = (c) => {
-      const initial = VD.initial(c.name.replace(/^(Dr\.|Dona)\s+/, ''));
+      const initial = VD.initial(c.name);
+      const isCg = cg && c.id === cg.id;
+      const tel = c.phone.replace(/\D/g, '');
+      const waNumber = tel.length === 11 ? `55${tel}` : tel.length === 10 ? `55${tel}` : null;
       return `<article class="card stack">
         <div class="row"><div class="contact-av" aria-hidden="true">${initial}</div>
-          <div style="min-width:0">${c.id === cg.id ? '<span class="tag">Principal</span>' : ''}
-            <h3 class="t-h3 trunc">${esc(c.name)}</h3><p class="t-md muted" style="font-weight:600">${esc(c.role)}</p>
-            ${c.phone && !c.neighbor ? `<p class="t-time-m c-teal" style="letter-spacing:.02em">${esc(c.phone)}</p>` : `<p class="t-bold c-teal">Disponível no prédio</p>`}</div></div>
+          <div style="min-width:0">${isCg ? '<span class="tag">Principal</span>' : ''}
+            <h3 class="t-h3 trunc">${esc(c.name)}</h3>
+            <p class="t-md muted" style="font-weight:600">${esc(c.role)}</p>
+            <p class="t-time-m c-teal" style="letter-spacing:.02em">${esc(c.phone)}</p>
+          </div></div>
         <div class="stack">
-          <a class="btn lg ${c.id === cg.id ? 'btn-primary' : 'btn-softteal'}" href="tel:${c.tel}" data-act="callLog" data-name="${esc(c.name)}">${ic(c.clinic ? 'local_hospital' : c.neighbor ? 'door_front' : 'phone', { fill: true, size: 1.75 })}<span>Ligar Agora</span></a>
-          ${c.wa ? `<a class="btn lg btn-wa" href="https://wa.me/${c.wa}" target="_blank" rel="noopener">${ic('chat', { size: 1.75 })}<span>Conversar no WhatsApp</span></a>` : ''}
+          <a class="btn lg ${isCg ? 'btn-primary' : 'btn-softteal'}" href="tel:${tel}" data-act="callLog" data-name="${esc(c.name)}">${ic('phone', { fill: true, size: 1.75 })}<span>Ligar Agora</span></a>
+          ${waNumber ? `<a class="btn lg btn-wa" href="https://wa.me/${waNumber}" target="_blank" rel="noopener">${ic('chat', { size: 1.75 })}<span>Conversar no WhatsApp</span></a>` : ''}
         </div></article>`;
     };
-    const cgFirst = cg.name.split(' ')[0];
+
+    const cgFirst = cg ? cg.name.split(' ')[0] : 'seu familiar';
     const faq = VD.FAQ.map((f) => ({ ...f, a: f.a.replace(/\{cg\}/g, esc(cgFirst)) })).map((f) => `<details class="faq"><summary><div class="iconchip sm round" style="background:var(--container-high);color:var(--teal)">${ic(f.icon)}</div><span>${f.q}</span>${ic('expand_more', { cls: 'chev' })}</summary>
       <div class="answer"><p class="t-md">${f.a}</p>${f.phone ? `<a class="btn btn-softteal" href="tel:${f.phone.tel}">${ic('headset_mic')}<span>${f.phone.label}</span></a>` : ''}</div></details>`).join('');
+
+    const contactsSection = contacts.length > 0
+      ? `<section class="stack contacts">
+          <div class="section-head">
+            <h2 class="t-h2 row" style="gap:.4rem">${ic('groups', { cls: 'c-teal', size: 1.9 })}Pessoas de Confiança</h2>
+            <span class="pill-info">${contacts.length} contato${contacts.length > 1 ? 's' : ''}</span>
+          </div>
+          ${contacts.map(contact).join('')}
+        </section>`
+      : `<section class="card flat stack-xs" style="padding:1rem 1.2rem;border-style:dashed">
+          <div class="row" style="gap:.6rem">
+            ${ic('group_add', { cls: 'c-teal', size: 1.5 })}
+            <p class="t-md muted"><b>Nenhum contato cadastrado.</b><br>Adicione contatos em <b>Preferências</b> para vê-los aqui.</p>
+          </div>
+        </section>`;
 
     return {
       tab: 'ajuda',
@@ -39,8 +61,7 @@
             <div><h2 class="t-h3" id="sos-t" style="color:var(--error-text)">Emergência Médica</h2><p class="t-md" style="color:var(--error-text);font-weight:600">Atendimento rápido 24 horas</p></div></div>
           <a class="btn xl btn-danger" href="tel:192" data-act="samu" aria-label="Ligar para o SAMU, número 192">${ic('call', { fill: true, size: 2.25 })}<span>LIGAR SAMU (192)</span></a>
         </section>
-        <section class="stack contacts"><div class="section-head"><h2 class="t-h2 row" style="gap:.4rem">${ic('groups', { cls: 'c-teal', size: 1.9 })}Pessoas de Confiança</h2><span class="pill-info">${VD.CONTACTS.length} contatos</span></div>
-          ${VD.CONTACTS.map(contact).join('')}</section>
+        ${contactsSection}
         <section class="stack"><h2 class="t-h2 row" style="gap:.4rem">${ic('help', { cls: 'c-teal', size: 1.9 })}Dúvidas Frequentes</h2>${faq}</section>
       </div>`,
       cleanup() { speaking = false; VD.ui.speech.stop(); },
@@ -50,13 +71,17 @@
   // Ligações de emergência/contato nunca são bloqueadas nem atrasadas: o aviso ao familiar é só um extra (respeita a opção em Ajustes)
   const tellFamily = (reason) => {
     if (VD.auth.isGuest() || !S.settings.notifyFamily) return;
+    const cg = S.caregiver;
+    if (!cg) return;
     S.notifyFamily(reason);
-    VD.ui.toast('Ligando...', { icon: 'call', sub: `${S.caregiver.name.split(' ')[0]} será avisado(a) desta ligação.`, ms: 3500 });
+    VD.ui.toast('Ligando...', { icon: 'call', sub: `${cg.name.split(' ')[0]} será avisado(a) desta ligação.`, ms: 3500 });
   };
   VD.on('samu', () => { VD.vibrate([200, 100, 200]); tellFamily('Ligou para o SAMU (192)'); });
   VD.on('callLog', (el) => { tellFamily(`Ligou para ${el.dataset.name}`); });
   VD.on('askHelp', async () => {
-    const cg = S.caregiver, first = cg.name.split(' ')[0];
+    const cg = S.caregiver;
+    if (!cg) { VD.ui.toast('Adicione um contato em Preferências primeiro.', { icon: 'info' }); return; }
+    const first = cg.name.split(' ')[0];
     const ok = await VD.ui.confirmDialog({ title: 'Pedir ajuda', text: `Avisar ${first} agora?`, sub: `${first} receberá uma mensagem dizendo que você precisa de apoio.`, yes: 'Sim, avisar', no: 'Não avisar', icon: 'notifications_active' });
     if (ok) { S.notifyFamily('Pedido de ajuda'); VD.ui.toast('Mensagem enviada!', { kind: 'ok', icon: 'mark_chat_read', sub: `${first} recebeu o seu pedido de ajuda.` }); }
   });
@@ -64,6 +89,8 @@
     const label = document.getElementById('audioLabel');
     if (!VD.ui.speech.supported) { VD.ui.toast('Seu aparelho não tem leitura em voz', { icon: 'volume_off', kind: 'warn' }); return; }
     if (speaking) { VD.ui.speech.stop(); speaking = false; if (label) label.textContent = 'Ouvir novamente por voz'; return; }
-    VD.ui.speech.speak(VD.audioGuide(S.caregiver.name.split(' ')[0]), { onstart() { speaking = true; if (label) label.textContent = 'Parar áudio'; }, onend() { speaking = false; const l = document.getElementById('audioLabel'); if (l) l.textContent = 'Ouvir novamente por voz'; } });
+    const cg = S.caregiver;
+    const cgName = cg ? cg.name.split(' ')[0] : 'seu familiar';
+    VD.ui.speech.speak(VD.audioGuide(cgName, S.extraContacts || []), { onstart() { speaking = true; if (label) label.textContent = 'Parar áudio'; }, onend() { speaking = false; const l = document.getElementById('audioLabel'); if (l) l.textContent = 'Ouvir novamente por voz'; } });
   });
 })(window.VD);

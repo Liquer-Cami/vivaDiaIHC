@@ -8,7 +8,7 @@
     const planned = S.dayTasks(td).find((t) => t.activityId);
     const act = planned && VD.ACTIVITIES.find((a) => a.id === planned.activityId);
     const played = S.state.activityLog.filter((l) => l.date === td).length;
-    const cg = S.caregiver.name.split(' ')[0];
+    const cg = S.caregiver ? S.caregiver.name.split(' ')[0] : 'Sua família';
 
     const card = (a) => {
       const isPlanned = planned && planned.activityId === a.id;
@@ -55,7 +55,7 @@
     S.logActivity({ id, score });
     const linked = S.dayTasks(VD.today()).find((t) => t.activityId === id && t.status !== 'done');
     if (linked) S.complete(linked.key);
-    const cg = S.caregiver.name.split(' ')[0];
+    const cg = S.caregiver ? S.caregiver.name.split(' ')[0] : 'Sua família';
     const stars = score >= 90 ? 3 : score >= 60 ? 2 : 1;
     VD.ui.beep(2, false);
     VD.ui.openOverlay(`
