@@ -7,7 +7,7 @@
 
   /** Registra um handler para elementos com data-act="nome" */
   VD.on = (name, fn) => { handlers[name] = fn; };
-  const WRITE = new Set(['nextDone', 'nextSnooze', 'medTake', 'medSnooze', 'reconfirm', 'goNewMed', 'detDone', 'detSnooze', 'detUndo', 'delMed', 'agMark', 'addReminder', 'quickAddReminder', 'toggle', 'resetDemo', 'remDone', 'remSnooze', 'remFamily', 'remDelete', 'askHelp', 'swapCaregiver', 'deleteAccount']);
+  const WRITE = new Set(['nextDone', 'nextSnooze', 'medTake', 'medSnooze', 'reconfirm', 'goNewMed', 'detDone', 'detSnooze', 'detUndo', 'delMed', 'agMark', 'addReminder', 'quickAddReminder', 'toggle', 'resetDemo', 'remDone', 'remSnooze', 'remFamily', 'remDelete', 'askHelp', 'swapCaregiver', 'deleteAccount', 'openAddContact']);
   WRITE.add('playActivity'); // visitante só visualiza: não começa jogos
   document.addEventListener('click', (e) => {
     const el = e.target.closest('[data-act]');
@@ -26,7 +26,7 @@
         if (!ok) return false;
       }
       S.complete(key);
-      const notify = !!(t && S.settings.notifyFamily && t.medId);
+      const notify = !!(t && S.settings.notifyFamily && t.medId && S.caregiver);
       if (notify) S.notifyFamily(`${t.title} confirmado`);
       if (!silent && t) VD.ui.toast(t.medId ? 'Medicamento registrado!' : 'Atividade registrada!', { kind: 'ok', sub: `${t.title} marcada como feita.${notify ? ' Aviso enviado para ' + S.caregiver.name.split(' ')[0] + '.' : ''}`, action: { label: 'Desfazer', onClick: () => act.undo(key) } });
       return true;
