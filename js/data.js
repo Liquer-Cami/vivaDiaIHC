@@ -13,11 +13,8 @@ window.VD = window.VD || {};
 
   VD.USER = { name: 'Helena' };
 
-  VD.CONTACTS = [
-    { id: 'c1', name: 'Carla Silveira', role: 'Filha • Cuidadora', short: 'Filha (Cuidadora principal)', phone: '(11) 98765-4321', tel: '11987654321', wa: '5511987654321', main: true },
-    { id: 'c2', name: 'Dr. Eduardo Moreira', role: 'Médico', short: 'Cardiologista', phone: '(11) 3245-1200', tel: '1132451200', clinic: true },
-    { id: 'c3', name: 'Dona Maria', role: 'Vizinha', short: 'Vizinha', phone: '(11) 97123-9876', tel: '11971239876', neighbor: true },
-  ];
+  /** Lista de contatos de confiança — começa vazia; contatos reais são adicionados pelo usuário em Preferências */
+  VD.CONTACTS = [];
 
   VD.MEDS = [
     { id: 'm1', name: 'Metformina 500mg', dose: '1 comprimido', form: 'Comprimido oral', instructions: ['Tomar com água após o café da manhã.', 'Caixa branca guardada na cozinha, ao lado do açucareiro.', 'Em caso de enjoo, avisar a família.'], stock: 18 },
@@ -53,8 +50,12 @@ window.VD = window.VD || {};
     { icon: 'warning', q: 'Esqueci se tomei ou tenho dúvida na dose. O que faço?', a: 'Não tome outra dose por conta própria. Ligue para {cg} ou para o seu médico. Se estiver passando mal, ligue agora para o SAMU.', phone: { tel: '192', label: 'Ligar SAMU (192)' } },
   ];
 
-  /** Texto lido em voz alta na tela de Ajuda — segue a ordem real da tela e usa os contatos cadastrados */
-  VD.audioGuide = (cg) => `Você está na Central de Ajuda do VivaDia. Primeiro, há um botão para avisar ${cg} de que você precisa de ajuda. Logo abaixo está o botão vermelho grande para ligar direto para o SAMU, número 192. Depois estão os seus contatos de confiança: ${VD.CONTACTS.map((c) => `${c.name}, ${c.role.replace('•', 'e')}`).join('; ')}. Em cada um, toque em Ligar Agora para telefonar.`;
+  /** Texto lido em voz alta na tela de Ajuda — usa os contatos reais cadastrados pelo usuário (via store) */
+  VD.audioGuide = (cg, contacts) => {
+    const base = `Você está na Central de Ajuda do VivaDia. Primeiro, há um botão para avisar ${cg} de que você precisa de ajuda. Logo abaixo está o botão vermelho grande para ligar direto para o SAMU, número 192.`;
+    if (!contacts || contacts.length === 0) return base + ' Você ainda não tem contatos de confiança cadastrados. Adicione-os em Preferências.';
+    return base + ` Depois estão os seus contatos de confiança: ${contacts.map((c) => `${c.name}, ${c.role}`).join('; ')}. Em cada um, toque em Ligar Agora para telefonar.`;
+  };
 
   /* ---------- Atividades mentais ---------- */
   VD.ACTIVITIES = [

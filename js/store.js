@@ -2,7 +2,7 @@
 (function (VD) {
   let KEY = null;        // chave do usuário logado (null = visitante/ninguém)
   let guest = false;     // visitante: dados de exemplo só na memória, somente leitura
-  const DEFAULT_SETTINGS = { bigAlert: true, loudSound: true, notifyFamily: true, fontSize: 'large', caregiverId: 'c1' };
+  const DEFAULT_SETTINGS = { bigAlert: true, loudSound: true, notifyFamily: true, fontSize: 'large', caregiverId: null };
   const FONT_STEPS = ['standard', 'large', 'xlarge'];
   let state;
   const subs = [];
@@ -46,6 +46,7 @@
       activityLog: [],
       familyLog: [],
       deletedTemplates: [],
+      extraContacts: [],
     };
   }
 
@@ -62,6 +63,16 @@
             if (t6) s.templates.push(t6);
           }
           s.deletedTemplates = s.deletedTemplates || [];
+          s.extraContacts = s.extraContacts || [];
+          if (s.settings) {
+            if (s.extraContacts.length > 0) {
+              if (!s.extraContacts.some((c) => c.id === s.settings.caregiverId)) {
+                s.settings.caregiverId = s.extraContacts[0].id;
+              }
+            } else {
+              s.settings.caregiverId = null;
+            }
+          }
           // contas antigas: títulos que ficaram em minúscula ("medicamento da manhã") passam a começar com maiúscula
           s.templates.forEach((t) => { if (/^medicamento\b/.test(t.title || '')) t.title = VD.capital(t.title); });
           return s;
@@ -88,9 +99,10 @@
     },
     subscribe(fn) { subs.push(fn); },
     med: (id) => state.meds.find((m) => m.id === id),
-    contact: (id) => VD.CONTACTS.find((c) => c.id === id),
-    get caregiver() { return S.contact(state.settings.caregiverId) || VD.CONTACTS[0]; },
+    contact: (id) => (state.extraContacts || []).find((c) => c.id === id),
+    get caregiver() { return S.contact(state.settings.caregiverId) || (state.extraContacts || [])[0] || null; },
     template: (id) => state.templates.find((t) => t.id === id),
+    get extraContacts() { return state.extraContacts || []; },
 
     /** Tarefas de um dia, já com o status e horário efetivo (adiamentos) */
     dayTasks(d) {
@@ -172,6 +184,26 @@
       commit();
     },
     setSettings(patch) { state.settings = { ...state.settings, ...patch }; commit(); },
+    addExtraContact({ name, phone, role }) {
+      if ((state.extraContacts || []).length >= 3) return false;
+      const id = 'ec' + Date.now();
+      state.extraContacts = [...(state.extraContacts || []), { id, name, phone, role }];
+      // se ainda não há cuidador definido, usa o primeiro contato adicionado
+      if (!state.settings.caregiverId || !S.contact(state.settings.caregiverId)) {
+        state.settings = { ...state.settings, caregiverId: id };
+      }
+      commit();
+      return id;
+    },
+    removeExtraContact(id) {
+      state.extraContacts = (state.extraContacts || []).filter((c) => c.id !== id);
+      // se o cuidador removido era o atual, aponta para o próximo disponível (ou null)
+      if (state.settings.caregiverId === id) {
+        const next = (state.extraContacts || [])[0];
+        state.settings = { ...state.settings, caregiverId: next ? next.id : null };
+      }
+      commit();
+    },
     stepFont(dir) {
       const i = FONT_STEPS.indexOf(state.settings.fontSize);
       const n = Math.max(0, Math.min(FONT_STEPS.length - 1, i + dir));
@@ -179,12 +211,12 @@
       return FONT_STEPS[n];
     },
     logActivity(entry) { state.activityLog.push({ date: VD.today(), at: VD.nowTime(), ...entry }); commit(); },
-    notifyFamily(reason) { state.familyLog.push({ date: VD.today(), at: VD.nowTime(), reason, to: S.caregiver.name }); commit(); },
+    notifyFamily(reason) { state.familyLog.push({ date: VD.today(), at: VD.nowTime(), reason, to: S.caregiver ? S.caregiver.name : 'Família' }); commit(); },
     reset() { state = seed(); commit(); },
   };
 
   // Visitante só visualiza: qualquer escrita é bloqueada aqui (defesa extra além da interface)
-  ['complete', 'undo', 'snooze', 'reconfirm', 'addTemplate', 'removeTemplate', 'addMed', 'removeMed', 'logActivity', 'notifyFamily', 'reset'].forEach((name) => {
+  ['complete', 'undo', 'snooze', 'reconfirm', 'addTemplate', 'removeTemplate', 'addMed', 'removeMed', 'logActivity', 'notifyFamily', 'reset', 'addExtraContact', 'removeExtraContact'].forEach((name) => {
     const fn = S[name];
     S[name] = function (...args) {
       if (guest) { if (VD.auth) VD.auth.blocked(); return null; }
