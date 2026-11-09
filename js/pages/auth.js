@@ -35,7 +35,7 @@
   /* ---------------- Entrar ---------------- */
   VD.pages.entrar = () => ({
     fullscreen: true, title: 'Entrar',
-    html: `<main class="auth" data-no-rerender>${fontBar}
+    html: `<main class="auth auth-login" data-no-rerender>${fontBar}
       ${brand('Sua rotina. Seu cuidado. Sua autonomia.')}
       <form id="loginForm" class="card stack-lg" novalidate>
         <h2 class="t-h2">Entrar na minha conta</h2>
@@ -44,15 +44,14 @@
         ${pwField('l-pass', 'Senha', 'current-password')}
         <button type="button" class="chk" role="checkbox" aria-checked="true" id="remember" data-act="chk"><span class="box">${ic('check', { size: 1.5 })}</span><span class="t-md">Manter conectado</span></button>
         <button class="btn xl btn-primary" type="submit">${ic('login', { size: 2 })}<span>ENTRAR</span></button>
-        <a class="btn-link" href="#/recuperar" style="align-self:center">${ic('lock_reset')}<span>Esqueci minha senha</span></a>
+        <a class="btn-link auth-forgot" href="#/recuperar" style="align-self:center">${ic('lock_reset')}<span>Esqueci minha senha</span></a>
       </form>
       <div class="or"><span>ou</span></div>
-      <div class="stack">
+      <div class="stack auth-alt">
         <a class="btn lg btn-outline" href="#/cadastro">${ic('person_add', { fill: true, size: 1.75 })}<span>Criar minha conta</span></a>
         <button class="btn lg btn-soft" data-act="guestLogin">${ic('visibility', { size: 1.75 })}<span>Entrar como visitante</span></button>
-        <p class="t-md muted center">Visitante só olha o aplicativo. Nada é salvo.</p>
       </div>
-      <div class="card tint flat stack-xs"><span class="t-small c-teal row" style="gap:.3rem">${ic('science', { size: 1.25 })}Conta de demonstração</span>
+      <div class="card tint flat stack-xs auth-demo"><span class="t-small c-teal row" style="gap:.3rem">${ic('science', { size: 1.25 })}Conta de demonstração</span>
         <p class="t-md"><b>${VD.auth.DEMO.email}</b><br/>Senha: <b>${VD.auth.DEMO.password}</b></p>
         <button class="btn sm btn-softteal" type="button" data-act="fillDemo">${ic('auto_fix_high')}<span>Preencher para mim</span></button></div>
     </main>`,
@@ -78,7 +77,7 @@
   /* ---------------- Criar conta ---------------- */
   VD.pages.cadastro = () => ({
     fullscreen: true, title: 'Criar conta',
-    html: `<main class="auth" data-no-rerender>
+    html: `<main class="auth auth-reg" data-no-rerender>
       <div class="auth-top"><a class="back" href="#/entrar" aria-label="Voltar para entrar">${ic('arrow_back', { size: 1.75 })}</a>${fontBar.replace('<div class="auth-top">', '<div style="display:contents">')}</div>
       ${brand('Vamos criar sua conta. É rápido!')}
       <form id="regForm" class="card stack-lg" novalidate>
@@ -94,7 +93,7 @@
           <span class="errmsg" id="e-terms" role="alert" hidden style="display:block;margin-top:.4rem"></span></div>
         <button class="btn xl btn-primary" type="submit">${ic('check_circle', { fill: true, size: 2 })}<span>CRIAR CONTA</span></button>
       </form>
-      <p class="t-lg center">Já tem conta? <a href="#/entrar" style="color:var(--primary);font-weight:700;text-decoration:underline">Entrar</a></p>
+      <p class="t-lg center auth-foot">Já tem conta? <a href="#/entrar" style="color:var(--primary);font-weight:700;text-decoration:underline">Entrar</a></p>
     </main>`,
     mount(root) {
       bindStrength(root, 'r-pass');
@@ -133,7 +132,7 @@
   /* ---------------- Recuperar senha (3 passos) ---------------- */
   VD.pages.recuperar = () => ({
     fullscreen: true, title: 'Recuperar senha',
-    html: `<main class="auth" data-no-rerender>
+    html: `<main class="auth auth-rec" data-no-rerender>
       <div class="auth-top"><a class="back" href="#/entrar" aria-label="Voltar para entrar">${ic('arrow_back', { size: 1.75 })}</a>${fontBar.replace('<div class="auth-top">', '<div style="display:contents">')}</div>
       ${brand('Vamos recuperar o seu acesso.')}
       <div class="card stack-lg" id="recBox"></div></main>`,
