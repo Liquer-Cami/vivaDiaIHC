@@ -6,22 +6,8 @@
   const cur = () => S.settings;
   const toggle = (key, label) => `<button class="switch" role="switch" aria-checked="${cur()[key]}" aria-label="${label}" data-act="toggle" data-key="${key}"><span class="knob">${ic(cur()[key] ? 'check' : 'close')}</span></button>`;
   // texto do estado ao lado de cada chave (não depende só de cor/ícone)
-  const STATE = {
-    bigAlert: ['Ligado: o aviso ocupa a tela toda', 'Desligado: só aparece uma mensagem pequena'],
-    loudSound: ['Ligado: o som toca até você responder', 'Desligado: sem som'],
-    notifyFamily: ['Ligado: seu familiar é avisado', 'Desligado: ninguém é avisado'],
-  };
   const FONT_LABELS = { standard: ['A', 'Padrão', '1.125rem'], large: ['A+', 'Grande', '1.375rem'], xlarge: ['A++', 'Extra', '1.625rem'] };
   const PREVIEW = { standard: '1.125rem', large: '1.375rem', xlarge: '1.625rem' };
-
-  const ROLE_OPTIONS = [
-    { value: 'Filho', label: 'Filho' },
-    { value: 'Filha', label: 'Filha' },
-    { value: 'Sobrinha', label: 'Sobrinha' },
-    { value: 'Vizinha', label: 'Vizinha' },
-    { value: 'Médico', label: 'Médico' },
-    { value: 'Outro', label: 'Outro familiar ou cuidador' },
-  ];
 
   /* ---- helpers de contatos ---- */
 
@@ -301,7 +287,6 @@
       return;
     }
     if ((S.extraContacts || []).length >= 3) return;
-    const roleOpts = ROLE_OPTIONS.map((r) => `<option value="${esc(r.value)}">${esc(r.label)}</option>`).join('');
     const html = `
       <div class="row between">
         <h3 class="t-h2">${ic('person_add')} Novo contato</h3>
@@ -321,10 +306,8 @@
         </div>
         <div class="stack-xs">
           <label class="t-bold" for="ac-role">Papel desta pessoa</label>
-          <select class="input" id="ac-role" name="role" required>
-            <option value="">Toque para escolher o papel…</option>
-            ${roleOpts}
-          </select>
+          <input class="input" id="ac-role" name="role" type="text" placeholder="Ex.: Filho, Médico, etc." autocomplete="off" required maxlength="60">
+
           <span class="t-small c-accent" id="ac-role-err" style="display:none">Escolha quem esta pessoa é para você.</span>
         </div>
         <button type="submit" class="btn lg btn-primary">${ic('check')}<span>Salvar contato</span></button>
@@ -351,15 +334,14 @@
           e.preventDefault();
           const name = nameIn.value.trim();
           const phone = phoneIn.value.trim();
-          const role = roleIn.value;
+          const role = roleIn.value.trim();
 
           ov.querySelector('#ac-name-err').style.display = name ? 'none' : '';
           ov.querySelector('#ac-phone-err').style.display = phone ? 'none' : '';
           ov.querySelector('#ac-role-err').style.display = role ? 'none' : '';
           if (!name || !phone || !role) return;
 
-          const roleLabel = ROLE_OPTIONS.find((r) => r.value === role)?.label || role;
-          const result = S.addExtraContact({ name, phone, role: roleLabel });
+          const result = S.addExtraContact({ name, phone, role });
           if (result === false) {
             VD.ui.toast('Limite de 3 contatos atingido.', { icon: 'info' });
             close();
