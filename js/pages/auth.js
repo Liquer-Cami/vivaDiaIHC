@@ -72,7 +72,7 @@
     },
   });
   VD.on('chk', (el) => { const on = el.getAttribute('aria-checked') !== 'true'; el.setAttribute('aria-checked', on); });
-  VD.on('fillDemo', () => { document.getElementById('l-email').value = VD.auth.DEMO.email; const p = document.getElementById('l-pass'); p.value = VD.auth.DEMO.password; p.focus(); });
+  VD.on('fillDemo', () => { VD.auth.restoreDemo(); document.getElementById('l-email').value = VD.auth.DEMO.email; const p = document.getElementById('l-pass'); p.value = VD.auth.DEMO.password; p.focus(); });
   VD.on('guestLogin', () => { VD.auth.guest(); VD.ui.toast('Você entrou como visitante', { icon: 'visibility', sub: 'Pode olhar tudo, mas nada será salvo.' }); VD.go('/hoje'); });
 
   /* ---------------- Criar conta ---------------- */

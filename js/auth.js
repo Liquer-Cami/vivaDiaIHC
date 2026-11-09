@@ -73,6 +73,13 @@
     },
     guest() { setSession({ guest: true }, false); this.state = attach({ guest: true }); },
     logout() { setSession(null); this.state = attach(null); },
+    /* Atalho da demonstração: devolve a conta demo à senha padrão (usado por "Preencher para mim"). */
+    restoreDemo() {
+      ensureDemo();
+      const l = users(); const u = l.find((x) => x.id === DEMO.id);
+      if (u) { u.pass = hash(DEMO.email, DEMO.password); saveUsers(l); }
+      failed = { n: 0, until: 0 };
+    },
     emailExists(email) { return users().some((u) => u.email === norm(email)); },
     /* Troca de senha confirmada pelo NOME DO PERFIL + SENHA ANTIGA (sem e-mail). */
     changePassword(name, oldPassword, newPassword) {
