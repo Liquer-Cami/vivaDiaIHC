@@ -44,7 +44,7 @@
         ${pwField('l-pass', 'Senha', 'current-password')}
         <button type="button" class="chk" role="checkbox" aria-checked="true" id="remember" data-act="chk"><span class="box">${ic('check', { size: 1.5 })}</span><span class="t-md">Manter conectado</span></button>
         <button class="btn xl btn-primary" type="submit">${ic('login', { size: 2 })}<span>ENTRAR</span></button>
-        <a class="btn-link auth-forgot" href="#/recuperar" style="align-self:center">${ic('lock_reset')}<span>Esqueci minha senha</span></a>
+        <a class="btn-link" href="#/recuperar" style="align-self:center">${ic('lock_reset')}<span>Esqueci / trocar minha senha</span></a>
       </form>
       <div class="or"><span>ou</span></div>
       <div class="stack auth-alt">
@@ -71,7 +71,7 @@
     },
   });
   VD.on('chk', (el) => { const on = el.getAttribute('aria-checked') !== 'true'; el.setAttribute('aria-checked', on); });
-  VD.on('fillDemo', () => { document.getElementById('l-email').value = VD.auth.DEMO.email; const p = document.getElementById('l-pass'); p.value = VD.auth.DEMO.password; p.focus(); });
+  VD.on('fillDemo', () => { VD.auth.restoreDemo(); document.getElementById('l-email').value = VD.auth.DEMO.email; const p = document.getElementById('l-pass'); p.value = VD.auth.DEMO.password; p.focus(); });
   VD.on('guestLogin', () => { VD.auth.guest(); VD.ui.toast('Você entrou como visitante', { icon: 'visibility', sub: 'Pode olhar tudo, mas nada será salvo.' }); VD.go('/hoje'); });
 
   /* ---------------- Criar conta ---------------- */
@@ -129,54 +129,41 @@
       <button class="btn lg btn-primary" data-close>${ic('check')}<span>Entendi</span></button>`);
   });
 
-  /* ---------------- Recuperar senha (3 passos) ---------------- */
+  /* ---------------- Trocar senha (nome do perfil + senha antiga) ---------------- */
   VD.pages.recuperar = () => ({
-    fullscreen: true, title: 'Recuperar senha',
-    html: `<main class="auth auth-rec" data-no-rerender>
+    fullscreen: true, title: 'Trocar senha',
+    html: `<main class="auth" data-no-rerender>
       <div class="auth-top"><a class="back" href="#/entrar" aria-label="Voltar para entrar">${ic('arrow_back', { size: 1.75 })}</a>${fontBar.replace('<div class="auth-top">', '<div style="display:contents">')}</div>
-      ${brand('Vamos recuperar o seu acesso.')}
-      <div class="card stack-lg" id="recBox"></div></main>`,
+      ${brand('Vamos trocar a sua senha.')}
+      <form id="recForm" class="card stack-lg" novalidate>
+        <h2 class="t-h2">Trocar minha senha</h2>
+        <p class="t-md muted">Para sua segurança, confirme o <b>nome do seu perfil</b> e a <b>senha antiga</b>.</p>
+        <div class="alert" id="alert" role="alert" hidden></div>
+        <div class="field"><label for="p-name">Nome do perfil</label><input class="input" id="p-name" autocomplete="name" placeholder="Ex.: Helena Souza" /><span class="errmsg" id="e-p-name" role="alert" hidden></span></div>
+        ${pwField('p-old', 'Senha antiga', 'current-password')}
+        ${pwField('n-pass', 'Nova senha', 'new-password', strengthHTML)}
+        ${pwField('n-pass2', 'Repita a nova senha', 'new-password')}
+        <button class="btn xl btn-success" type="submit">${ic('lock_reset', { size: 1.75 })}<span>SALVAR NOVA SENHA</span></button>
+      </form></main>`,
     mount(root) {
-      const box = $('#recBox', root); let email = '';
-      const steps = [`1 Seu e-mail`, `2 Código`, `3 Nova senha`];
-      const dots = (n) => `<div class="row wrap" style="gap:.4rem">${steps.map((s, i) => `<span class="badge ${i + 1 < n ? 'done' : i + 1 === n ? 'info' : 'snoozed'}">${i + 1 < n ? ic('check_circle') : ''}${s}</span>`).join('')}</div>`;
-      function step1() {
-        box.innerHTML = `${dots(1)}<h2 class="t-h2">Esqueci minha senha</h2><p class="t-md muted">Digite o e-mail da sua conta. Vamos enviar um código para você.</p>
-          <div class="field"><label for="p-email">E-mail</label><input class="input" id="p-email" type="email" inputmode="email" autocapitalize="none" placeholder="exemplo@email.com" value="${esc(email)}" /><span class="errmsg" id="e-p-email" role="alert" hidden></span></div>
-          <button class="btn xl btn-primary" id="p-go">${ic('send', { size: 1.75 })}<span>ENVIAR CÓDIGO</span></button>`;
-        $('#p-go', box).addEventListener('click', () => {
-          const v = $('#p-email', box).value.trim();
-          if (!VD.auth.validEmail(v)) return err(box, 'p-email', 'Escreva um e-mail válido. Exemplo: nome@email.com');
-          if (!VD.auth.emailExists(v)) return err(box, 'p-email', 'Não encontramos uma conta com esse e-mail.');
-          email = v; step2();
-        });
-        $('#p-email', box).addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#p-go', box).click(); });
-      }
-      function step2() {
-        box.innerHTML = `${dots(2)}<h2 class="t-h2">Digite o código</h2><p class="t-md muted">Enviamos um código de 6 números para <b>${esc(email)}</b>.</p>
-          <div class="note row start">${ic('science', { cls: 'c-accent' })}<span class="t-md">Modo demonstração: nenhum e-mail é enviado de verdade. O código é <b style="letter-spacing:.15em">${VD.auth.RESET_CODE}</b>.</span></div>
-          <div class="field"><label for="p-code">Código</label><input class="input" id="p-code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000" style="font-size:1.75rem;letter-spacing:.4em;text-align:center;font-weight:700" /><span class="errmsg" id="e-p-code" role="alert" hidden></span></div>
-          <button class="btn xl btn-primary" id="p-go">${ic('verified', { size: 1.75 })}<span>CONFIRMAR</span></button>
-          <button class="btn btn-soft" id="p-back">${ic('arrow_back')}<span>Mudar o e-mail</span></button>`;
-        $('#p-go', box).addEventListener('click', () => { $('#p-code', box).value.trim() === VD.auth.RESET_CODE ? step3() : err(box, 'p-code', 'Código incorreto. Confira os 6 números.'); });
-        $('#p-back', box).addEventListener('click', step1);
-        $('#p-code', box).focus();
-      }
-      function step3() {
-        box.innerHTML = `${dots(3)}<h2 class="t-h2">Crie uma nova senha</h2>
-          ${pwField('n-pass', 'Nova senha', 'new-password', strengthHTML)}${pwField('n-pass2', 'Repita a nova senha', 'new-password')}
-          <button class="btn xl btn-success" id="p-go">${ic('lock_reset', { size: 1.75 })}<span>SALVAR NOVA SENHA</span></button>`;
-        bindStrength(box, 'n-pass');
-        $('#p-go', box).addEventListener('click', () => {
-          const a = $('#n-pass', box).value, b = $('#n-pass2', box).value;
-          err(box, 'n-pass', a.length < 6 ? 'A senha precisa de pelo menos 6 caracteres.' : ''); err(box, 'n-pass2', b !== a ? 'As senhas não são iguais.' : '');
-          if (a.length < 6 || a !== b) return;
-          VD.auth.resetPassword(email, a);
-          VD.ui.toast('Senha alterada!', { kind: 'ok', sub: 'Agora é só entrar com a nova senha.' });
-          VD.go('/entrar');
-        });
-      }
-      step1();
+      bindStrength(root, 'n-pass');
+      $('#recForm', root).addEventListener('submit', (e) => {
+        e.preventDefault(); banner(root, '');
+        const name = $('#p-name', root).value.trim(), old = $('#p-old', root).value, a = $('#n-pass', root).value, b = $('#n-pass2', root).value;
+        const errs = {
+          'p-name': name.length < 2 ? 'Escreva o nome do seu perfil.' : '',
+          'p-old': !old ? 'Escreva sua senha antiga.' : '',
+          'n-pass': a.length < 6 ? 'A senha precisa de pelo menos 6 caracteres.' : (a === old ? 'A nova senha precisa ser diferente da antiga.' : ''),
+          'n-pass2': b !== a ? 'As senhas não são iguais.' : '',
+        };
+        Object.entries(errs).forEach(([k, v]) => err(root, k, v));
+        const first = Object.keys(errs).find((k) => errs[k]);
+        if (first) { $('#' + first, root).focus(); return; }
+        const r = VD.auth.changePassword(name, old, a);
+        if (!r.ok) { banner(root, r.error); $('#p-old', root).value = ''; $('#p-old', root).focus(); return; }
+        VD.ui.toast('Senha alterada!', { kind: 'ok', sub: 'Agora é só entrar com a nova senha.' });
+        VD.go('/entrar');
+      });
     },
   });
 })(window.VD);
