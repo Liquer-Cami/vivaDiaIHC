@@ -161,17 +161,17 @@
     html: `<div class="page" data-no-rerender>
       <div class="stack-xs"><h1 class="t-h1">Adicionar Medicamento</h1><p class="t-md muted">Preencha com calma. Só o nome e um horário são obrigatórios.</p></div>
       <form id="medForm" class="stack-lg" novalidate>
-        <div class="field"><label for="f-name">Nome do medicamento</label><input class="input" id="f-name" placeholder="Ex.: Sinvastatina 20mg" autocomplete="off" /><span class="errmsg" id="e-name" role="alert" hidden>Escreva o nome do medicamento.</span></div>
-        <div class="field"><label for="f-dose">Quanto tomar</label><input class="input" id="f-dose" value="1 comprimido" autocomplete="off" /></div>
-        <div class="field"><label>Tipo</label>
+        <div class="field"><label for="f-name">Nome do medicamento <span style="color:var(--error-text); font-weight:400">(Obrigatório)</span></label><input class="input" id="f-name" placeholder="Ex.: Sinvastatina 20mg" autocomplete="off" /><span class="errmsg" id="e-name" role="alert" hidden>Escreva o nome do medicamento.</span></div>
+        <div class="field"><label for="f-dose">Quanto tomar <span class="muted" style="font-weight:400">(opcional)</span></label><input class="input" id="f-dose" value="1 comprimido" autocomplete="off" /></div>
+        <div class="field"><label>Tipo <span style="color:var(--error-text); font-weight:400">(Obrigatório)</span></label>
           <div class="chips" id="f-form" role="radiogroup">
             ${['Comprimido', 'Cápsula', 'Gotas', 'Líquido'].map((f, i) => `<button type="button" class="chip${i === 0 ? ' on' : ''}" role="radio" aria-checked="${i === 0}" data-form="${f}">${f}</button>`).join('')}
           </div></div>
-        <div class="field"><label>Horários</label><div class="stack" id="times"></div>
+        <div class="field"><label>Horários <span style="color:var(--error-text); font-weight:400">(Obrigatório)</span></label><div class="stack" id="times"></div>
           <button type="button" class="btn btn-softteal" id="addTime">${ic('add_alarm')}<span>Adicionar outro horário</span></button>
           <span class="errmsg" id="e-times" role="alert" hidden>Coloque pelo menos um horário.</span></div>
-        <div class="field"><label for="f-inst">Como tomar (opcional)</label><input class="input" id="f-inst" placeholder="Ex.: Tomar após o almoço, com água" /></div>
-        <div class="field"><label for="f-stock">Quantos tem na caixa</label><input class="input" id="f-stock" type="number" inputmode="numeric" min="0" value="30" /></div>
+        <div class="field"><label for="f-inst">Como tomar <span class="muted" style="font-weight:400">(opcional)</span></label><input class="input" id="f-inst" placeholder="Ex.: Tomar após o almoço, com água" /></div>
+        <div class="field"><label for="f-stock">Quantos tem na caixa <span class="muted" style="font-weight:400">(opcional)</span></label><input class="input" id="f-stock" type="number" inputmode="numeric" min="0" value="30" /></div>
         <div class="stack"><button class="btn xl btn-primary" type="submit">${ic('check_circle', { fill: true, size: 2 })}<span>Salvar medicamento</span></button>
           <button class="btn btn-soft" type="button" data-act="back">${ic('close')}<span>Cancelar</span></button></div>
       </form></div>`,

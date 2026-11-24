@@ -109,11 +109,39 @@
   }
 
   /* ---------- Som (WebAudio) ---------- */
+  /* Celulares (Android e iPhone) só liberam o som depois de um toque na tela.
+     Por isso o áudio é criado e "destravado" no primeiro toque, e o lembrete
+     que chega depois (sem toque) já encontra o som liberado. */
   let audioCtx = null;
+  const AC = window.AudioContext || window.webkitAudioContext;
+  function getCtx() {
+    if (!audioCtx && AC) audioCtx = new AC();
+    return audioCtx;
+  }
+  function unlockAudio() {
+    try {
+      // iPhone (iOS 17+): toca mesmo com a chave de silencioso ligada
+      if (navigator.audioSession) navigator.audioSession.type = 'playback';
+      const ctx = getCtx(); if (!ctx) return;
+      if (ctx.state !== 'running') ctx.resume();
+      // som vazio para destravar o áudio no iPhone
+      const b = ctx.createBuffer(1, 1, 22050), s = ctx.createBufferSource();
+      s.buffer = b; s.connect(ctx.destination); s.start(0);
+    } catch (e) { /* sem áudio disponível */ }
+  }
+  ['pointerdown', 'touchend', 'click', 'keydown'].forEach((ev) => document.addEventListener(ev, unlockAudio, { capture: true, passive: true }));
+  // ao voltar para o app, o iPhone pode ter "interrompido" o áudio
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && audioCtx && audioCtx.state !== 'running') audioCtx.resume().catch(() => {}); });
+
   function beep(times = 1, loud = true) {
     try {
-      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const ctx = getCtx(); if (!ctx) return;
+      if (ctx.state !== 'running') { ctx.resume().then(() => playBeeps(times, loud)).catch(() => {}); return; }
+      playBeeps(times, loud);
+    } catch (e) { /* sem áudio disponível */ }
+  }
+  function playBeeps(times, loud) {
+    try {
       for (let i = 0; i < times; i++) {
         const t0 = audioCtx.currentTime + i * 0.34;
         const o = audioCtx.createOscillator();

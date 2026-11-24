@@ -40,8 +40,8 @@
       <form id="loginForm" class="card stack-lg" novalidate>
         <h2 class="t-h2">Entrar na minha conta</h2>
         <div class="alert" id="alert" role="alert" hidden></div>
-        <div class="field"><label for="l-email">E-mail</label><input class="input" id="l-email" type="email" inputmode="email" autocomplete="username" placeholder="exemplo@email.com" autocapitalize="none" /><span class="errmsg" id="e-l-email" role="alert" hidden></span></div>
-        ${pwField('l-pass', 'Senha', 'current-password')}
+        <div class="field"><label for="l-email">E-mail <span style="color:var(--error-text); font-weight:400">(Obrigatório)</span></label><input class="input" id="l-email" type="email" inputmode="email" autocomplete="username" placeholder="exemplo@email.com" autocapitalize="none" /><span class="errmsg" id="e-l-email" role="alert" hidden></span></div>
+        ${pwField('l-pass', 'Senha <span style="color:var(--error-text); font-weight:400">(Obrigatório)</span>', 'current-password')}
         <button type="button" class="chk" role="checkbox" aria-checked="true" id="remember" data-act="chk"><span class="box">${ic('check', { size: 1.5 })}</span><span class="t-md">Manter conectado</span></button>
         <button class="btn xl btn-primary" type="submit">${ic('login', { size: 2 })}<span>ENTRAR</span></button>
         <a class="btn-link" href="#/recuperar" style="align-self:center">${ic('lock_reset')}<span>Esqueci / trocar minha senha</span></a>
@@ -139,10 +139,10 @@
         <h2 class="t-h2">Trocar minha senha</h2>
         <p class="t-md muted">Para sua segurança, confirme o <b>nome do seu perfil</b> e a <b>senha antiga</b>.</p>
         <div class="alert" id="alert" role="alert" hidden></div>
-        <div class="field"><label for="p-name">Nome do perfil</label><input class="input" id="p-name" autocomplete="name" placeholder="Ex.: Helena Souza" /><span class="errmsg" id="e-p-name" role="alert" hidden></span></div>
-        ${pwField('p-old', 'Senha antiga', 'current-password')}
-        ${pwField('n-pass', 'Nova senha', 'new-password', strengthHTML)}
-        ${pwField('n-pass2', 'Repita a nova senha', 'new-password')}
+        <div class="field"><label for="p-name">Nome do perfil <span style="color:var(--error-text); font-weight:400">(Obrigatório)</span></label><input class="input" id="p-name" autocomplete="name" placeholder="Ex.: Helena Souza" /><span class="errmsg" id="e-p-name" role="alert" hidden></span></div>
+        ${pwField('p-old', 'Senha antiga <span style="color:var(--error-text); font-weight:400">(Obrigatório)</span>', 'current-password')}
+        ${pwField('n-pass', 'Nova senha <span style="color:var(--error-text); font-weight:400">(Obrigatório)</span>', 'new-password', strengthHTML)}
+        ${pwField('n-pass2', 'Repita a nova senha <span style="color:var(--error-text); font-weight:400">(Obrigatório)</span>', 'new-password')}
         <button class="btn xl btn-success" type="submit">${ic('lock_reset', { size: 1.75 })}<span>SALVAR NOVA SENHA</span></button>
       </form></main>`,
     mount(root) {

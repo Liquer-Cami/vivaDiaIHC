@@ -174,7 +174,7 @@
         <div class="field"><label>Tipo <span style="color:var(--error-text); font-weight:400">(Obrigatório)</span></label><div class="chips" id="r-cat">${catBtns.map(([id, icon, l]) => `<button type="button" class="chip${id === cat ? ' on' : ''}" data-cat="${id}">${ic(icon, { size: 1.3 })}${l}</button>`).join('')}</div></div>
         <div class="note row start" id="r-med-notice" hidden role="status">${ic('info', { cls: 'c-accent' })}<span class="t-md">Este será um aviso somente para o dia selecionado. Para medicamentos diários, cadastre-os na tela de Medicamentos.</span></div>
         <div class="field" id="r-game-wrap" hidden><label for="r-game">Escolha o jogo</label><select class="input" id="r-game">${VD.ACTIVITIES.map((a) => `<option value="${a.id}">${esc(a.title)}</option>`).join('')}</select></div>
-        <div class="field"><label>Repetir?</label><div class="chips" id="r-rep">
+        <div class="field"><label>Repetir? <span style="color:var(--error-text); font-weight:400">(Obrigatório)</span></label><div class="chips" id="r-rep">
           <button type="button" class="chip on" data-rep="once" id="r-once">Só em ${VD.dayMonth(sel)}</button><button type="button" class="chip" data-rep="daily">Todos os dias</button></div></div>
         <div class="field"><label for="r-note">Observação <span class="muted" style="font-weight:400">(opcional)</span></label><input class="input" id="r-note" placeholder="Ex.: um copo cheio" /></div>
         <div class="stack"><button class="btn xl btn-primary" type="submit">${ic('check_circle', { fill: true, size: 2 })}<span>Salvar lembrete</span></button>

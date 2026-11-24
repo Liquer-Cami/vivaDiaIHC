@@ -295,17 +295,17 @@
       <p class="t-md muted">Preencha os dados de quem cuida ou ajuda você. É rápido e fácil.</p>
       <form id="add-contact-form" class="stack" novalidate>
         <div class="stack-xs">
-          <label class="t-bold" for="ac-name">Nome completo</label>
+          <label class="t-bold" for="ac-name">Nome completo <span style="color:var(--error-text); font-weight:400">(Obrigatório)</span></label>
           <input class="input" id="ac-name" name="name" type="text" placeholder="Ex.: Ana Paula" autocomplete="name" autofocus required maxlength="60">
           <span class="t-small c-accent" id="ac-name-err" style="display:none">Informe o nome da pessoa.</span>
         </div>
         <div class="stack-xs">
-          <label class="t-bold" for="ac-phone">Número de telefone (com DDD)</label>
+          <label class="t-bold" for="ac-phone">Número de telefone (com DDD) <span style="color:var(--error-text); font-weight:400">(Obrigatório)</span></label>
           <input class="input" id="ac-phone" name="phone" type="tel" placeholder="Ex.: (11) 98765-4321" autocomplete="tel" required maxlength="20">
           <span class="t-small c-accent" id="ac-phone-err" style="display:none">Informe o número de telefone com o DDD.</span>
         </div>
         <div class="stack-xs">
-          <label class="t-bold" for="ac-role">Papel desta pessoa</label>
+          <label class="t-bold" for="ac-role">Papel desta pessoa <span style="color:var(--error-text); font-weight:400">(Obrigatório)</span></label>
           <input class="input" id="ac-role" name="role" type="text" placeholder="Ex.: Filho, Médico, etc." autocomplete="off" required maxlength="60">
 
           <span class="t-small c-accent" id="ac-role-err" style="display:none">Escolha quem esta pessoa é para você.</span>
